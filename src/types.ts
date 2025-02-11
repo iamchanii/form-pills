@@ -32,40 +32,42 @@ export type DefaultValues<TFieldValues> =
 		? DeepPartial<Awaited<TFieldValues>>
 		: DeepPartial<TFieldValues>;
 
-export interface CreateFieldsRenderProps<
+export interface DefineFieldRenderProps<
 	TFieldsShape,
 	TFieldName extends string,
 > {
 	name?: TFieldName;
-	value?: TFieldsShape;
-	onChange?: (values: TFieldsShape) => void;
+	value: TFieldsShape;
+	onChange: (values: TFieldsShape) => void;
 }
 
-export interface CreateFieldsOptions<
+export interface DefineFieldOptions<
 	TFieldsShape,
+	TSchema extends StandardSchemaV1<TFieldsShape>,
 	TFieldName extends string,
 	TProps,
 	TRenderResult,
 > {
 	name: TFieldName;
-	schema: StandardSchemaV1<TFieldsShape>;
+	schema: TSchema;
 	defaultValues?: DefaultValues<TFieldsShape>;
 	fallback?: TRenderResult;
 	render: (
-		props: CreateFieldsRenderProps<TFieldsShape, TFieldName> & TProps,
+		props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps,
 	) => TRenderResult;
 }
 
-export interface CreateFieldsResult<
+export interface DefineFieldResult<
 	TFieldsShape,
+	TSchema extends StandardSchemaV1<TFieldsShape>,
 	TFieldName extends string,
 	TProps,
 	TRenderResult,
 > {
 	(
-		props: CreateFieldsRenderProps<TFieldsShape, TFieldName> & TProps,
+		props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps,
 	): TRenderResult;
-	schemaShape: { [key in TFieldName]: StandardSchemaV1<TFieldsShape> };
+	schemaShape: { [key in TFieldName]: TSchema };
 	getDefaultValue: () =>
 		| { [key in TFieldName]: DefaultValues<TFieldsShape> }
 		| undefined;

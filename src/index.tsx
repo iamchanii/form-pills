@@ -1,27 +1,38 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type {
-	CreateFieldsOptions,
-	CreateFieldsRenderProps,
-	CreateFieldsResult,
+	DefineFieldOptions,
+	DefineFieldRenderProps,
+	DefineFieldResult,
 	DefaultValues,
 } from './types';
 import { Suspense } from 'react';
 
-export function createFields<TProps extends object = object>() {
-	return function createFieldsImpl<TFieldsShape, TFieldName extends string>({
+export function defineField<TProps extends object = object>() {
+	return function defineFieldImpl<
+		TFieldsShape,
+		TSchema extends StandardSchemaV1<TFieldsShape>,
+		TFieldName extends string,
+	>({
 		name,
 		schema,
 		defaultValues,
 		fallback,
 		render: Render,
-	}: CreateFieldsOptions<
+	}: DefineFieldOptions<
 		TFieldsShape,
+		TSchema,
 		TFieldName,
 		TProps,
 		React.ReactNode
-	>): CreateFieldsResult<TFieldsShape, TFieldName, TProps, React.ReactNode> {
+	>): DefineFieldResult<
+		TFieldsShape,
+		TSchema,
+		TFieldName,
+		TProps,
+		React.ReactNode
+	> {
 		const Field = fallback
-			? (props: CreateFieldsRenderProps<TFieldsShape, TFieldName> & TProps) => (
+			? (props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps) => (
 					<Suspense fallback={fallback}>
 						<Render {...props} />
 					</Suspense>
@@ -36,7 +47,7 @@ export function createFields<TProps extends object = object>() {
 						})
 					: undefined,
 			schemaShape: { [name]: schema } as {
-				[key in TFieldName]: StandardSchemaV1<TFieldsShape>;
+				[key in TFieldName]: TSchema;
 			},
 		});
 
