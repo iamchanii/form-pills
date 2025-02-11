@@ -1,10 +1,10 @@
 import './App.css';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFields } from 'form-pills';
+import { defineField } from 'form-pills';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const NestedObjectFields = createFields<{ color: string }>()({
+const NestedObjectField = defineField<{ color: string }>()({
 	name: 'nestedObject',
 	schema: z.object({
 		username: z.string(),
@@ -39,7 +39,7 @@ const NestedObjectFields = createFields<{ color: string }>()({
 });
 
 const formSchema = z.object({
-	...NestedObjectFields.schemaShape,
+	...NestedObjectField.schemaShape,
 });
 
 type FormSchemaType = z.infer<typeof formSchema>;
@@ -48,7 +48,7 @@ function App() {
 	const form = useForm<FormSchemaType>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			...NestedObjectFields.getDefaultValue(),
+			...NestedObjectField.getDefaultValue(),
 		},
 	});
 
@@ -61,7 +61,7 @@ function App() {
 			<Controller<FormSchemaType, 'nestedObject'>
 				name="nestedObject"
 				control={form.control}
-				render={({ field }) => <NestedObjectFields color="red" {...field} />}
+				render={({ field }) => <NestedObjectField color="red" {...field} />}
 			/>
 
 			<button type="submit">Submit</button>
