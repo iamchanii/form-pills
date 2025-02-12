@@ -33,8 +33,9 @@ export type DefaultValues<TFieldValues> =
 		: DeepPartial<TFieldValues>;
 
 export interface DefineFieldRenderProps<
-	TFieldsShape,
+	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
+	TFieldsShape = StandardSchemaV1.InferOutput<TSchema>,
 > {
 	name?: TFieldName;
 	value: TFieldsShape;
@@ -42,33 +43,33 @@ export interface DefineFieldRenderProps<
 }
 
 export interface DefineFieldOptions<
-	TFieldsShape,
-	TSchema extends StandardSchemaV1<TFieldsShape>,
+	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
-	TProps,
+	TGetDefaultValuesArgs extends unknown[],
 	TRenderResult,
+	TProps,
 > {
 	name: TFieldName;
 	schema: TSchema;
-	defaultValues?: DefaultValues<TFieldsShape>;
+	getDefaultValues?: (
+		...args: TGetDefaultValuesArgs
+	) => DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
 	fallback?: TRenderResult;
 	render: (
-		props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps,
+		props: DefineFieldRenderProps<TSchema, TFieldName> & TProps,
 	) => TRenderResult;
 }
 
 export interface DefineFieldResult<
-	TFieldsShape,
-	TSchema extends StandardSchemaV1<TFieldsShape>,
+	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
-	TProps,
+	TGetDefaultValuesArgs extends unknown[],
 	TRenderResult,
+	TProps,
 > {
-	(
-		props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps,
-	): TRenderResult;
+	(props: DefineFieldRenderProps<TSchema, TFieldName> & TProps): TRenderResult;
 	schemaShape: { [key in TFieldName]: TSchema };
-	getDefaultValue: () =>
-		| { [key in TFieldName]: DefaultValues<TFieldsShape> }
-		| undefined;
+	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
+		[key in TFieldName]: DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
+	};
 }

@@ -9,30 +9,30 @@ import { Suspense } from 'react';
 
 export function defineField<TProps extends object = object>() {
 	return function defineFieldImpl<
-		TFieldsShape,
-		TSchema extends StandardSchemaV1<TFieldsShape>,
+		TSchema extends StandardSchemaV1,
 		TFieldName extends string,
+		TGetDefaultValuesArgs extends unknown[],
 	>({
 		name,
 		schema,
-		defaultValues,
+		getDefaultValues,
 		fallback,
 		render: Render,
 	}: DefineFieldOptions<
-		TFieldsShape,
 		TSchema,
 		TFieldName,
-		TProps,
-		React.ReactNode
+		TGetDefaultValuesArgs,
+		React.ReactNode,
+		TProps
 	>): DefineFieldResult<
-		TFieldsShape,
 		TSchema,
 		TFieldName,
-		TProps,
-		React.ReactNode
+		TGetDefaultValuesArgs,
+		React.ReactNode,
+		TProps
 	> {
 		const Field = fallback
-			? (props: DefineFieldRenderProps<TFieldsShape, TFieldName> & TProps) => (
+			? (props: DefineFieldRenderProps<TSchema, TFieldName> & TProps) => (
 					<Suspense fallback={fallback}>
 						<Render {...props} />
 					</Suspense>
@@ -40,12 +40,14 @@ export function defineField<TProps extends object = object>() {
 			: Render;
 
 		const FieldResult = Object.assign(Field, {
-			getDefaultValue: () =>
-				defaultValues
-					? ({ [name]: defaultValues } as {
-							[key in TFieldName]: DefaultValues<TFieldsShape>;
-						})
-					: undefined,
+			getDefaultValues: ((...args: TGetDefaultValuesArgs) =>
+				getDefaultValues
+					? { [name]: getDefaultValues(...args) }
+					: undefined) as (...args: TGetDefaultValuesArgs) => {
+				[key in TFieldName]: DefaultValues<
+					StandardSchemaV1.InferOutput<TSchema>
+				>;
+			},
 			schemaShape: { [name]: schema } as {
 				[key in TFieldName]: TSchema;
 			},

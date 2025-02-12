@@ -10,10 +10,10 @@ const NestedObjectField = defineField<{ color: string }>()({
 		username: z.string(),
 		starCount: z.number(),
 	}),
-	defaultValues: {
-		username: '',
-		starCount: 0,
-	},
+	getDefaultValues: (defaultStarCount?: number) => ({
+		username: 'a',
+		starCount: defaultStarCount,
+	}),
 	render: ({ color, value, onChange }) => {
 		return (
 			<div>
@@ -48,7 +48,7 @@ function App() {
 	const form = useForm<FormSchemaType>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			...NestedObjectField.getDefaultValue(),
+			...NestedObjectField.getDefaultValues(),
 		},
 	});
 
