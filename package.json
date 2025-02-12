@@ -4,13 +4,13 @@
 	"description": "",
 	"license": "ISC",
 	"type": "module",
-	"homepage": "https://github.com/iamchanii/fielz#readme",
+	"homepage": "https://github.com/iamchanii/form-pills#readme",
 	"bugs": {
-		"url": "https://github.com/iamchanii/fielz/issues"
+		"url": "https://github.com/iamchanii/form-pills/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iamchanii/fielz.git"
+		"url": "git+https://github.com/iamchanii/form-pills.git"
 	},
 	"files": ["dist"],
 	"main": "./dist/index.js",
