@@ -75,11 +75,21 @@ export interface DefineFieldResult<
 }
 
 export type InferFieldShape<T> = T extends DefineFieldResult<
-	infer U,
+	infer Schema,
 	any,
 	any,
 	any,
 	any
 >
-	? StandardSchemaV1.InferOutput<U>
+	? StandardSchemaV1.InferOutput<Schema>
+	: never;
+
+export type InferSchemaShape<T> = T extends DefineFieldResult<
+	infer Schema,
+	infer FieldName,
+	any,
+	any,
+	any
+>
+	? { [key in FieldName]: StandardSchemaV1.InferOutput<Schema> }
 	: never;
