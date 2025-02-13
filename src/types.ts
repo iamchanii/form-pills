@@ -85,22 +85,24 @@ export interface DefineFieldResult<
 	};
 }
 
-export type InferFieldShape<T> = T extends DefineFieldResult<
-	infer Schema,
-	any,
-	any,
-	any,
-	any
->
-	? StandardSchemaV1.InferOutput<Schema>
-	: never;
+type Primitive =
+	| string
+	| number
+	| boolean
+	| bigint
+	| symbol
+	| null
+	| undefined
+	| Array<any>;
 
-export type InferSchemaShape<T> = T extends DefineFieldResult<
+export type InferFieldShape<T> = T extends DefineFieldResult<
 	infer Schema,
 	infer FieldName,
 	any,
 	any,
 	any
 >
-	? { [key in FieldName]: StandardSchemaV1.InferOutput<Schema> }
+	? NonNullable<StandardSchemaV1.InferOutput<Schema>> extends Primitive
+		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+		: NonNullable<StandardSchemaV1.InferOutput<Schema>>
 	: never;

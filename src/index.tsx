@@ -61,4 +61,4 @@ export function defineField<TProps extends object = object>() {
 	};
 }
 
-export type { InferFieldShape, InferSchemaShape } from './types';
+export type { InferFieldShape } from './types';

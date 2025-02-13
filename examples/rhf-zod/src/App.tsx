@@ -22,7 +22,12 @@ const NestedObjectField = defineField<{ color: string }>()({
 				<input
 					type="text"
 					value={value?.username}
-					onChange={(e) => onChange?.({ ...value, username: e.target.value })}
+					onChange={(e) =>
+						onChange?.({
+							...value!,
+							username: e.target.value,
+						})
+					}
 				/>
 
 				<input
@@ -30,7 +35,7 @@ const NestedObjectField = defineField<{ color: string }>()({
 					inputMode="numeric"
 					value={value?.starCount}
 					onChange={(e) =>
-						onChange?.({ ...value, starCount: e.target.valueAsNumber })
+						onChange?.({ ...value!, starCount: e.target.valueAsNumber })
 					}
 				/>
 			</div>
