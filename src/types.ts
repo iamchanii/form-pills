@@ -38,8 +38,8 @@ export interface DefineFieldRenderProps<
 	TFieldShape = StandardSchemaV1.InferOutput<TSchema>,
 > {
 	name?: TFieldName;
-	value: TFieldShape;
-	onChange: (values: TFieldShape) => void;
+	value?: TFieldShape;
+	onChange?: (values: TFieldShape) => void;
 }
 
 export interface DefineFieldOptions<
