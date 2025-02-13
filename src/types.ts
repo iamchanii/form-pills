@@ -35,11 +35,11 @@ export type DefaultValues<TFieldValues> =
 export interface DefineFieldRenderProps<
 	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
-	TFieldsShape = StandardSchemaV1.InferOutput<TSchema>,
+	TFieldShape = StandardSchemaV1.InferOutput<TSchema>,
 > {
 	name?: TFieldName;
-	value: TFieldsShape;
-	onChange: (values: TFieldsShape) => void;
+	value: TFieldShape;
+	onChange: (values: TFieldShape) => void;
 }
 
 export interface DefineFieldOptions<
@@ -73,3 +73,13 @@ export interface DefineFieldResult<
 		[key in TFieldName]: DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
 	};
 }
+
+export type InferFieldShape<T> = T extends DefineFieldResult<
+	infer U,
+	any,
+	any,
+	any,
+	any
+>
+	? StandardSchemaV1.InferOutput<U>
+	: never;
