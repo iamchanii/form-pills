@@ -20,7 +20,8 @@
 		".": "./dist/index.js"
 	},
 	"scripts": {
-		"build": "tsdown"
+		"build": "tsdown",
+		"prepare": "tsdown"
 	},
 	"author": "Chanhee Lee <contact@imch.dev>",
 	"devDependencies": {
