@@ -32,7 +32,7 @@ export type DefaultValues<TFieldValues> =
 		? DeepPartial<Awaited<TFieldValues>>
 		: DeepPartial<TFieldValues>;
 
-export interface DefineFieldRenderProps<
+export interface DefineFieldResultProps<
 	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
 	TFieldShape = StandardSchemaV1.InferOutput<TSchema>,
@@ -40,6 +40,17 @@ export interface DefineFieldRenderProps<
 	name?: TFieldName;
 	value?: TFieldShape;
 	onChange?: (values: TFieldShape) => void;
+}
+
+export interface DefineFieldRenderProps<
+	TSchema extends StandardSchemaV1,
+	TFieldName extends string,
+	TFieldShape = StandardSchemaV1.InferOutput<TSchema>,
+> extends Omit<
+		DefineFieldResultProps<TSchema, TFieldName, TFieldShape>,
+		'name'
+	> {
+	name: TFieldName;
 }
 
 export interface DefineFieldOptions<
@@ -67,7 +78,7 @@ export interface DefineFieldResult<
 	TRenderResult,
 	TProps,
 > {
-	(props: DefineFieldRenderProps<TSchema, TFieldName> & TProps): TRenderResult;
+	(props: DefineFieldResultProps<TSchema, TFieldName> & TProps): TRenderResult;
 	schemaShape: { [key in TFieldName]: TSchema };
 	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
 		[key in TFieldName]: DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;

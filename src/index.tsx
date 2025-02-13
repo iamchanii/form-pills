@@ -1,11 +1,11 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import type {
-	DefineFieldOptions,
-	DefineFieldRenderProps,
-	DefineFieldResult,
-	DefaultValues,
-} from './types';
 import { Suspense } from 'react';
+import type {
+	DefaultValues,
+	DefineFieldOptions,
+	DefineFieldResult,
+	DefineFieldResultProps,
+} from './types';
 
 export function defineField<TProps extends object = object>() {
 	return function defineFieldImpl<
@@ -31,13 +31,17 @@ export function defineField<TProps extends object = object>() {
 		React.ReactNode,
 		TProps
 	> {
-		const Field = fallback
-			? (props: DefineFieldRenderProps<TSchema, TFieldName> & TProps) => (
-					<Suspense fallback={fallback}>
-						<Render {...props} />
-					</Suspense>
-				)
-			: Render;
+		const Field = (
+			props: DefineFieldResultProps<TSchema, TFieldName> & TProps,
+		): React.ReactNode => {
+			const renderResult = <Render {...props} name={props.name || name} />;
+
+			if (fallback) {
+				return <Suspense fallback={fallback}>{renderResult}</Suspense>;
+			}
+
+			return renderResult;
+		};
 
 		const FieldResult = Object.assign(Field, {
 			getDefaultValues: ((...args: TGetDefaultValuesArgs) =>
