@@ -41,19 +41,17 @@ export function defineField<TProps extends object = object>() {
     TProps
   > {
     const Field = (props: TProps): React.ReactNode => {
-      const { name: accumulatedFieldName } = useContext(FieldNameContext);
+      const { name: parentFieldName } = useContext(FieldNameContext);
 
       const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
-        () => ({ name, schema }),
-        [name, schema],
+        () => ({ parentFieldName, name, schema }),
+        [parentFieldName, name, schema],
       );
 
       const renderResult = (
         <FieldNameContext.Provider
           value={{
-            name: accumulatedFieldName
-              ? `${accumulatedFieldName}.${name}`
-              : name,
+            name: parentFieldName ? `${parentFieldName}.${name}` : name,
           }}
         >
           {render(context, props)}
@@ -85,15 +83,16 @@ export function defineField<TProps extends object = object>() {
   };
 }
 
-export function useFieldName<TDefineFieldRenderContext>(
-  _context: TDefineFieldRenderContext,
-) {
-  const { name } = useContext(FieldNameContext);
-
+export function useFieldName<
+  TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
+>(context: TDefineFieldRenderContext) {
   return useCallback(
     // @ts-expect-error
-    (fieldName) => [name, fieldName].filter(Boolean).join('.'),
-    [name],
+    (fieldName) =>
+      [context.parentFieldName, context.name, fieldName]
+        .filter(Boolean)
+        .join('.'),
+    [context],
   ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
     infer Schema,
     infer FieldName

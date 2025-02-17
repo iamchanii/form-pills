@@ -31,7 +31,8 @@ const NestedObjectField = defineField<{ color: string }>()({
   render: (context, { color }) => {
     const name = useFieldName(context);
 
-    name('username');
+    name('username') === 'nestedObject.username';
+    name() === 'nestedObject';
 
     // @ts-expect-error
     name('invalidKey');
