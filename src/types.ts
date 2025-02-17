@@ -104,3 +104,8 @@ export type InferParentFieldShape<T> = T extends DefineFieldResult<
 >
 	? { [key in FieldName]: InferFieldShape<T> }
 	: never;
+
+export interface FieldNameHelper<TFieldShape> {
+	(): string;
+	<TFieldName extends keyof TFieldShape>(fieldName?: TFieldName): TFieldName;
+}

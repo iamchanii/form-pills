@@ -1,11 +1,14 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import { Suspense } from 'react';
+import { createContext, Suspense, useContext, useMemo } from 'react';
 import type {
 	DefaultValues,
 	DefineFieldOptions,
 	DefineFieldResult,
 	DefineFieldResultProps,
+	FieldNameHelper,
 } from './types';
+
+const FieldNameContext = createContext<{ name?: string }>({});
 
 export function defineField<TProps extends object = object>() {
 	return function defineFieldImpl<
@@ -34,7 +37,20 @@ export function defineField<TProps extends object = object>() {
 		const Field = (
 			props: DefineFieldResultProps<TSchema, TFieldName> & TProps,
 		): React.ReactNode => {
-			const renderResult = <Render {...props} name={props.name || name} />;
+			const { name: accumulatedFieldName } = useContext(FieldNameContext);
+
+			const renderResult = (
+				<FieldNameContext.Provider
+					value={useMemo(
+						() => ({
+							name: [accumulatedFieldName, name].filter(Boolean).join('.'),
+						}),
+						[accumulatedFieldName, name],
+					)}
+				>
+					<Render {...props} name={props.name || name} />
+				</FieldNameContext.Provider>
+			);
 
 			if (fallback) {
 				return <Suspense fallback={fallback}>{renderResult}</Suspense>;
@@ -59,6 +75,15 @@ export function defineField<TProps extends object = object>() {
 
 		return FieldResult;
 	};
+}
+
+export function useFieldName<
+	TFieldShape extends object = any,
+>(): FieldNameHelper<TFieldShape> {
+	const { name } = useContext(FieldNameContext);
+
+	return ((fieldName?: string) =>
+		[name, fieldName].filter(Boolean).join('.')) as never;
 }
 
 export type { InferFieldShape, InferParentFieldShape } from './types';
