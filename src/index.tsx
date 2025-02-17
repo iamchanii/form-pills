@@ -48,21 +48,27 @@ export function defineField<TProps extends object = object>() {
         [parentFieldName, name, schema],
       );
 
-      const renderResult = (
+      const Render = () => render(context, props);
+
+      const RenderResult = () => (
         <FieldNameContext.Provider
           value={{
             name: parentFieldName ? `${parentFieldName}.${name}` : name,
           }}
         >
-          {render(context, props)}
+          <Render />
         </FieldNameContext.Provider>
       );
 
       if (fallback) {
-        return <Suspense fallback={fallback}>{renderResult}</Suspense>;
+        return (
+          <Suspense fallback={fallback}>
+            <RenderResult />
+          </Suspense>
+        );
       }
 
-      return renderResult;
+      return <RenderResult />;
     };
 
     const FieldResult = Object.assign(Field, {
@@ -86,13 +92,13 @@ export function defineField<TProps extends object = object>() {
 export function useFieldName<
   TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
 >(context: TDefineFieldRenderContext) {
+  const { name: parentFieldName } = useContext(FieldNameContext);
+
   return useCallback(
     // @ts-expect-error
     (fieldName) =>
-      [context.parentFieldName, context.name, fieldName]
-        .filter(Boolean)
-        .join('.'),
-    [context],
+      [parentFieldName, context.name, fieldName].filter(Boolean).join('.'),
+    [parentFieldName, context],
   ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
     infer Schema,
     infer FieldName
