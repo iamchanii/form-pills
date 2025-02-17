@@ -1,6 +1,7 @@
 import './App.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { defineField } from 'form-pills';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -9,6 +10,7 @@ const TestField = defineField()({
 	schema: z.string(),
 	getDefaultValues: () => '',
 	render: ({ name }) => {
+		useState(1);
 		return <p>{name()}</p>;
 	},
 });

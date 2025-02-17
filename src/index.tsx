@@ -47,17 +47,14 @@ export function defineField<TProps extends object = object>() {
 				[accumulatedFieldName, name],
 			);
 
-			const renderResult = useMemo(
-				() => (
-					<FieldNameContext.Provider
-						value={{
-							name: [accumulatedFieldName, name].filter(Boolean).join('.'),
-						}}
-					>
-						{render(context, props)}
-					</FieldNameContext.Provider>
-				),
-				[props, render, name, context, accumulatedFieldName],
+			const renderResult = (
+				<FieldNameContext.Provider
+					value={{
+						name: [accumulatedFieldName, name].filter(Boolean).join('.'),
+					}}
+				>
+					{render(context, props)}
+				</FieldNameContext.Provider>
 			);
 
 			if (fallback) {
