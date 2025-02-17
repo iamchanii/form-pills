@@ -87,10 +87,20 @@ export interface DefineFieldResult<
 
 export type InferFieldShape<T> = T extends DefineFieldResult<
 	infer Schema,
+	any,
+	any,
+	any,
+	any
+>
+	? NonNullable<StandardSchemaV1.InferOutput<Schema>>
+	: never;
+
+export type InferParentFieldShape<T> = T extends DefineFieldResult<
+	any,
 	infer FieldName,
 	any,
 	any,
 	any
 >
-	? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+	? { [key in FieldName]: InferFieldShape<T> }
 	: never;
