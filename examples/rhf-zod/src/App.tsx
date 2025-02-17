@@ -1,18 +1,31 @@
 import './App.css';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { defineField } from 'form-pills';
+import { defineField, type InferFieldShape, useFieldName } from 'form-pills';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+const TestField = defineField()({
+	name: 'test',
+	schema: z.string(),
+	getDefaultValues: () => '',
+	render: () => {
+		const name = useFieldName();
+
+		return <p>{name()}</p>;
+	},
+});
 
 const NestedObjectField = defineField<{ color: string }>()({
 	name: 'nestedObject',
 	schema: z.object({
 		username: z.string(),
 		starCount: z.number(),
+		...TestField.schemaShape,
 	}),
 	getDefaultValues: (defaultStarCount?: number) => ({
 		username: 'a',
 		starCount: defaultStarCount,
+		...TestField.getDefaultValues(),
 	}),
 	render: ({ color, value, onChange }) => {
 		return (
@@ -38,6 +51,8 @@ const NestedObjectField = defineField<{ color: string }>()({
 						onChange?.({ ...value!, starCount: e.target.valueAsNumber })
 					}
 				/>
+
+				<TestField />
 			</div>
 		);
 	},
