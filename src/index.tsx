@@ -40,7 +40,7 @@ export function defineField<TProps extends object = object>() {
     React.ReactNode,
     TProps
   > {
-    const Field = (props: TProps): React.ReactNode => {
+    let Field = (props: TProps): React.ReactNode => {
       const { name: parentFieldName } = useContext(FieldNameContext);
 
       const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
@@ -48,28 +48,24 @@ export function defineField<TProps extends object = object>() {
         [parentFieldName, name, schema],
       );
 
-      const Render = () => render(context, props);
-
-      const RenderResult = () => (
+      return (
         <FieldNameContext.Provider
           value={{
             name: parentFieldName ? `${parentFieldName}.${name}` : name,
           }}
         >
-          <Render />
+          {render(context, props)}
         </FieldNameContext.Provider>
       );
-
-      if (fallback) {
-        return (
-          <Suspense fallback={fallback}>
-            <RenderResult />
-          </Suspense>
-        );
-      }
-
-      return <RenderResult />;
     };
+
+    if (fallback) {
+      Field = (props: TProps) => (
+        <Suspense fallback={fallback}>
+          <Field {...props} />
+        </Suspense>
+      );
+    }
 
     const FieldResult = Object.assign(Field, {
       getDefaultValues: ((...args: TGetDefaultValuesArgs) =>
@@ -92,13 +88,13 @@ export function defineField<TProps extends object = object>() {
 export function useFieldName<
   TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
 >(context: TDefineFieldRenderContext) {
-  const { name: parentFieldName } = useContext(FieldNameContext);
-
   return useCallback(
     // @ts-expect-error
     (fieldName) =>
-      [parentFieldName, context.name, fieldName].filter(Boolean).join('.'),
-    [parentFieldName, context],
+      [context.parentFieldName, context.name, fieldName]
+        .filter(Boolean)
+        .join('.'),
+    [context],
   ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
     infer Schema,
     infer FieldName
