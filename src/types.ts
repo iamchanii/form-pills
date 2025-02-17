@@ -27,31 +27,17 @@ type AsyncDefaultValues<TFieldValues> = (
 	payload?: unknown,
 ) => Promise<TFieldValues>;
 
-type Primitive =
-	| string
-	| number
-	| boolean
-	| bigint
-	| symbol
-	| null
-	| undefined
-	| Primitive[];
-
 export type DefaultValues<TFieldValues> =
 	TFieldValues extends AsyncDefaultValues<TFieldValues>
 		? DeepPartial<Awaited<TFieldValues>>
 		: DeepPartial<TFieldValues>;
 
 export interface FieldNameHelper<
-	TFieldShape,
+	TAvailableFieldNames,
 	TFieldNamePrefix extends string = '',
 > {
 	(): TFieldNamePrefix;
-	<
-		TFieldName extends TFieldShape extends Primitive
-			? never
-			: keyof TFieldShape & string,
-	>(
+	<TFieldName extends TAvailableFieldNames & string>(
 		fieldName?: TFieldName,
 	): TFieldNamePrefix extends ''
 		? TFieldName
@@ -59,11 +45,10 @@ export interface FieldNameHelper<
 }
 
 export interface DefineFieldRenderContext<
-	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
-	TFieldShape = StandardSchemaV1.InferOutput<TSchema>,
+	TAvailableFieldNames,
 > {
-	name: FieldNameHelper<TFieldShape, TFieldName>;
+	name: FieldNameHelper<TAvailableFieldNames, TFieldName>;
 }
 
 export interface DefineFieldOptions<
@@ -80,7 +65,10 @@ export interface DefineFieldOptions<
 	) => DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
 	fallback?: TRenderResult;
 	render: (
-		context: DefineFieldRenderContext<TSchema, TFieldName>,
+		context: DefineFieldRenderContext<
+			TFieldName,
+			keyof StandardSchemaV1.InferOutput<TSchema>
+		>,
 		props: TProps,
 	) => TRenderResult;
 }
@@ -110,11 +98,11 @@ export type InferFieldShape<T> = T extends DefineFieldResult<
 	: never;
 
 export type InferParentFieldShape<T> = T extends DefineFieldResult<
-	any,
+	infer Schema,
 	infer FieldName,
 	any,
 	any,
 	any
 >
-	? { [key in FieldName]: InferFieldShape<T> }
+	? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
 	: never;

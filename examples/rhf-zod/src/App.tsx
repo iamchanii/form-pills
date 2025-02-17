@@ -29,6 +29,10 @@ const NestedObjectField = defineField<{ color: string }>()({
 	}),
 	render: ({ name }, { color }) => {
 		name('starCount');
+
+		// @ts-expect-error
+		name('invalidKey');
+
 		return (
 			<div>
 				<p>color: {color}</p>

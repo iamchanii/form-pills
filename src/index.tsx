@@ -36,7 +36,12 @@ export function defineField<TProps extends object = object>() {
 		const Field = (props: TProps): React.ReactNode => {
 			const { name: accumulatedFieldName } = useContext(FieldNameContext);
 
-			const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
+			const context = useMemo<
+				DefineFieldRenderContext<
+					TFieldName,
+					keyof StandardSchemaV1.InferOutput<TSchema>
+				>
+			>(
 				() => ({
 					name: (fieldName) =>
 						// @ts-expect-error
