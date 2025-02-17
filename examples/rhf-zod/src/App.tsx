@@ -1,6 +1,6 @@
 import './App.css';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { defineField, type InferFieldShape, useFieldName } from 'form-pills';
+import { defineField } from 'form-pills';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -8,9 +8,7 @@ const TestField = defineField()({
 	name: 'test',
 	schema: z.string(),
 	getDefaultValues: () => '',
-	render: () => {
-		const name = useFieldName();
-
+	render: ({ name }) => {
 		return <p>{name()}</p>;
 	},
 });
@@ -27,30 +25,15 @@ const NestedObjectField = defineField<{ color: string }>()({
 		starCount: defaultStarCount,
 		...TestField.getDefaultValues(),
 	}),
-	render: ({ color, value, onChange }) => {
+	render: ({ name }, { color }) => {
+		name('starCount');
 		return (
 			<div>
 				<p>color: {color}</p>
 
-				<input
-					type="text"
-					value={value?.username}
-					onChange={(e) =>
-						onChange?.({
-							...value!,
-							username: e.target.value,
-						})
-					}
-				/>
+				<input type="text" />
 
-				<input
-					type="number"
-					inputMode="numeric"
-					value={value?.starCount}
-					onChange={(e) =>
-						onChange?.({ ...value!, starCount: e.target.valueAsNumber })
-					}
-				/>
+				<input type="number" inputMode="numeric" />
 
 				<TestField />
 			</div>
@@ -81,7 +64,7 @@ function App() {
 			<Controller<FormSchemaType, 'nestedObject'>
 				name="nestedObject"
 				control={form.control}
-				render={({ field }) => <NestedObjectField color="red" {...field} />}
+				render={({ field }) => <NestedObjectField color="sss" {...field} />}
 			/>
 
 			<button type="submit">Submit</button>

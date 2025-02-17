@@ -3,9 +3,8 @@ import { createContext, Suspense, useContext, useMemo } from 'react';
 import type {
 	DefaultValues,
 	DefineFieldOptions,
+	DefineFieldRenderContext,
 	DefineFieldResult,
-	DefineFieldResultProps,
-	FieldNameHelper,
 } from './types';
 
 const FieldNameContext = createContext<{ name?: string }>({});
@@ -20,7 +19,7 @@ export function defineField<TProps extends object = object>() {
 		schema,
 		getDefaultValues,
 		fallback,
-		render: Render,
+		render,
 	}: DefineFieldOptions<
 		TSchema,
 		TFieldName,
@@ -34,22 +33,31 @@ export function defineField<TProps extends object = object>() {
 		React.ReactNode,
 		TProps
 	> {
-		const Field = (
-			props: DefineFieldResultProps<TSchema, TFieldName> & TProps,
-		): React.ReactNode => {
+		const Field = (props: TProps): React.ReactNode => {
 			const { name: accumulatedFieldName } = useContext(FieldNameContext);
 
-			const renderResult = (
-				<FieldNameContext.Provider
-					value={useMemo(
-						() => ({
+			const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
+				() => ({
+					name: (fieldName) =>
+						// @ts-expect-error
+						[accumulatedFieldName, name, fieldName]
+							.filter(Boolean)
+							.join('.'),
+				}),
+				[accumulatedFieldName, name],
+			);
+
+			const renderResult = useMemo(
+				() => (
+					<FieldNameContext.Provider
+						value={{
 							name: [accumulatedFieldName, name].filter(Boolean).join('.'),
-						}),
-						[accumulatedFieldName, name],
-					)}
-				>
-					<Render {...props} name={props.name || name} />
-				</FieldNameContext.Provider>
+						}}
+					>
+						{render(context, props)}
+					</FieldNameContext.Provider>
+				),
+				[props, render, name, context, accumulatedFieldName],
 			);
 
 			if (fallback) {
@@ -75,15 +83,6 @@ export function defineField<TProps extends object = object>() {
 
 		return FieldResult;
 	};
-}
-
-export function useFieldName<
-	TFieldShape extends object = any,
->(): FieldNameHelper<TFieldShape> {
-	const { name } = useContext(FieldNameContext);
-
-	return ((fieldName?: string) =>
-		[name, fieldName].filter(Boolean).join('.')) as never;
 }
 
 export type { InferFieldShape, InferParentFieldShape } from './types';
