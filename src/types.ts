@@ -32,23 +32,39 @@ export type DefaultValues<TFieldValues> =
 		? DeepPartial<Awaited<TFieldValues>>
 		: DeepPartial<TFieldValues>;
 
-export interface FieldNameHelper<
-	TAvailableFieldNames,
-	TFieldNamePrefix extends string = '',
-> {
+type Primitive =
+	| string
+	| number
+	| boolean
+	| bigint
+	| symbol
+	| null
+	| undefined
+	| any[];
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+
+type KeyOfFieldShape<T> = T extends Primitive
+	? string | number
+	: KeysOfUnion<T>;
+
+export interface FieldNameHelper<TFieldNamePrefix extends string, TFieldShape> {
 	(): TFieldNamePrefix;
-	<TFieldName extends TAvailableFieldNames & string>(
+	<TFieldName extends KeyOfFieldShape<TFieldShape> & (string | number)>(
 		fieldName?: TFieldName,
-	): TFieldNamePrefix extends ''
-		? TFieldName
-		: `${TFieldNamePrefix}.${TFieldName}`;
+	): [TFieldName] extends [never]
+		? TFieldNamePrefix
+		: TFieldNamePrefix extends ''
+			? TFieldName
+			: `${TFieldNamePrefix}.${TFieldName}`;
 }
 
 export interface DefineFieldRenderContext<
+	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
-	TAvailableFieldNames,
 > {
-	name: FieldNameHelper<TAvailableFieldNames, TFieldName>;
+	name: TFieldName;
+	schema: TSchema;
 }
 
 export interface DefineFieldOptions<
@@ -65,10 +81,7 @@ export interface DefineFieldOptions<
 	) => DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
 	fallback?: TRenderResult;
 	render: (
-		context: DefineFieldRenderContext<
-			TFieldName,
-			keyof StandardSchemaV1.InferOutput<TSchema>
-		>,
+		context: DefineFieldRenderContext<TSchema, TFieldName>,
 		props: TProps,
 	) => TRenderResult;
 }
@@ -87,7 +100,7 @@ export interface DefineFieldResult<
 	};
 }
 
-export type InferFieldShape<T> = T extends DefineFieldResult<
+type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
 	infer Schema,
 	any,
 	any,
@@ -97,12 +110,25 @@ export type InferFieldShape<T> = T extends DefineFieldResult<
 	? NonNullable<StandardSchemaV1.InferOutput<Schema>>
 	: never;
 
-export type InferParentFieldShape<T> = T extends DefineFieldResult<
-	infer Schema,
-	infer FieldName,
-	any,
-	any,
-	any
->
-	? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
-	: never;
+type InferFieldShapeFromDefineFieldRenderContext<T> =
+	T extends DefineFieldRenderContext<infer Schema, any>
+		? NonNullable<StandardSchemaV1.InferOutput<Schema>>
+		: never;
+
+export type InferFieldShape<T> =
+	| InferFieldShapeFromDefineFieldResult<T>
+	| InferFieldShapeFromDefineFieldRenderContext<T>;
+
+type InferParentFieldShapeFromDefineFieldResult<T> =
+	T extends DefineFieldResult<infer Schema, infer FieldName, any, any, any>
+		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+		: never;
+
+type InferParentFieldShapeFromDefineFieldRenderContext<T> =
+	T extends DefineFieldRenderContext<infer Schema, infer FieldName>
+		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+		: never;
+
+export type InferParentFieldShape<T> =
+	| InferParentFieldShapeFromDefineFieldResult<T>
+	| InferParentFieldShapeFromDefineFieldRenderContext<T>;

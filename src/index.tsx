@@ -1,10 +1,17 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import { createContext, Suspense, useContext, useMemo } from 'react';
+import {
+	Suspense,
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+} from 'react';
 import type {
 	DefaultValues,
 	DefineFieldOptions,
 	DefineFieldRenderContext,
 	DefineFieldResult,
+	FieldNameHelper,
 } from './types';
 
 const FieldNameContext = createContext<{ name?: string }>({});
@@ -36,20 +43,9 @@ export function defineField<TProps extends object = object>() {
 		const Field = (props: TProps): React.ReactNode => {
 			const { name: accumulatedFieldName } = useContext(FieldNameContext);
 
-			const context = useMemo<
-				DefineFieldRenderContext<
-					TFieldName,
-					keyof StandardSchemaV1.InferOutput<TSchema>
-				>
-			>(
-				() => ({
-					name: (fieldName) =>
-						// @ts-expect-error
-						[accumulatedFieldName, name, fieldName]
-							.filter(Boolean)
-							.join('.'),
-				}),
-				[accumulatedFieldName, name],
+			const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
+				() => ({ name, schema }),
+				[name, schema],
 			);
 
 			const renderResult = (
@@ -85,6 +81,23 @@ export function defineField<TProps extends object = object>() {
 
 		return FieldResult;
 	};
+}
+
+export function useFieldName<TDefineFieldRenderContext>(
+	_context: TDefineFieldRenderContext,
+) {
+	const { name } = useContext(FieldNameContext);
+
+	return useCallback(
+		// @ts-expect-error
+		(fieldName) => [name, fieldName].filter(Boolean).join('.'),
+		[name],
+	) as TDefineFieldRenderContext extends DefineFieldRenderContext<
+		infer Schema,
+		infer FieldName
+	>
+		? FieldNameHelper<FieldName, StandardSchemaV1.InferOutput<Schema>>
+		: never;
 }
 
 export type { InferFieldShape, InferParentFieldShape } from './types';
