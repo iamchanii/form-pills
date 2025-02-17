@@ -1,11 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import {
-  Suspense,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import type {
   DefaultValues,
   DefineFieldOptions,
@@ -25,7 +19,6 @@ export function defineField<TProps extends object = object>() {
     name,
     schema,
     getDefaultValues,
-    fallback,
     render,
   }: DefineFieldOptions<
     TSchema,
@@ -40,7 +33,7 @@ export function defineField<TProps extends object = object>() {
     React.ReactNode,
     TProps
   > {
-    let Field = (props: TProps): React.ReactNode => {
+    const Field = (props: TProps): React.ReactNode => {
       const { name: parentFieldName } = useContext(FieldNameContext);
 
       const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
@@ -58,14 +51,6 @@ export function defineField<TProps extends object = object>() {
         </FieldNameContext.Provider>
       );
     };
-
-    if (fallback) {
-      Field = (props: TProps) => (
-        <Suspense fallback={fallback}>
-          <Field {...props} />
-        </Suspense>
-      );
-    }
 
     const FieldResult = Object.assign(Field, {
       getDefaultValues: ((...args: TGetDefaultValuesArgs) =>

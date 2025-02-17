@@ -80,7 +80,6 @@ export interface DefineFieldOptions<
   getDefaultValues?: (
     ...args: TGetDefaultValuesArgs
   ) => DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
-  fallback?: TRenderResult;
   render: (
     context: DefineFieldRenderContext<TSchema, TFieldName>,
     props: TProps,
