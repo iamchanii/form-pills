@@ -10,7 +10,7 @@
 - Create self-contained, reusable field components that reduce code duplication.
 - Seamlessly integrate with libraries like react-hook-form and Zod for efficient form state management and validation.
 - Enjoy a clear, straightforward API.
-- Lightweight bundle size (brotli < 1.4kB).
+- Lightweight bundle size (brotli 552B).
 
 ## Installation
 

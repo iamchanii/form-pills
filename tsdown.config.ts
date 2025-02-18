@@ -12,6 +12,7 @@ export default defineConfig({
 	unused: { level: 'error' },
 	publint: true,
 	sourcemap: true,
+	minify: true,
 	onSuccess() {
 		console.info('🙏 Build succeeded!');
 	},
