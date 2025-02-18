@@ -54,4 +54,4 @@ const UsernameField = defineField()({
 
 ## License
 
-ISC
+MIT
