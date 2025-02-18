@@ -50,7 +50,7 @@ const UsernameField = defineField()({
 
 ## Examples
 
-T.B.D
+- [React Hook Form + Zod](./examples/react-hook-form-zod/)
 
 ## License
 
