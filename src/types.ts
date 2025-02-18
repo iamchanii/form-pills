@@ -86,10 +86,6 @@ export interface DefineFieldOptions<
 	fallback?: TRenderResult;
 }
 
-export interface DefineFieldResultProps<TFieldName extends string> {
-	overrideName?: `${string}.${TFieldName}`;
-}
-
 export interface DefineFieldResult<
 	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
@@ -97,7 +93,7 @@ export interface DefineFieldResult<
 	TRenderResult,
 	TProps,
 > {
-	(props: TProps & DefineFieldResultProps<TFieldName>): TRenderResult;
+	(props: TProps): TRenderResult;
 	schemaShape: { [key in TFieldName]: TSchema };
 	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
 		[key in TFieldName]: DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
@@ -136,3 +132,8 @@ type InferParentFieldShapeFromDefineFieldRenderContext<T> =
 export type InferParentFieldShape<T> =
 	| InferParentFieldShapeFromDefineFieldResult<T>
 	| InferParentFieldShapeFromDefineFieldRenderContext<T>;
+
+export interface FieldNameProviderProps {
+	name: string;
+	children: any;
+}

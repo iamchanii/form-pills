@@ -1,13 +1,13 @@
 import './App.css';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { defineField, InferParentFieldShape, useFieldName } from 'form-pills';
-import { use, useState } from 'react';
 import {
-	Controller,
-	FormProvider,
-	useForm,
-	useFormContext,
-} from 'react-hook-form';
+	defineField,
+	FieldNameProvider,
+	type InferParentFieldShape,
+	useFieldName,
+} from 'form-pills';
+import { use, useState } from 'react';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 const promise = new Promise((resolve) => setTimeout(resolve, 1000));
@@ -30,12 +30,16 @@ const NestedObjectField = defineField<{ color: string }>()({
 	schema: z.object({
 		username: z.string(),
 		starCount: z.number(),
-		...TestField.schemaShape,
+		blabla: z.object({
+			...TestField.schemaShape,
+		}),
 	}),
 	getDefaultValues: () => ({
 		username: 'a',
 		starCount: 0,
-		...TestField.getDefaultValues(),
+		blabla: {
+			...TestField.getDefaultValues(),
+		},
 	}),
 	render: (context) => {
 		type ParentFieldShape = InferParentFieldShape<typeof context>;
@@ -55,7 +59,9 @@ const NestedObjectField = defineField<{ color: string }>()({
 				/>
 				<p>{name('starCount')}</p>
 
-				<TestField overrideName={`foo[0].test`} />
+				<FieldNameProvider name="blabla">
+					<TestField />
+				</FieldNameProvider>
 			</div>
 		);
 	},

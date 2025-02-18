@@ -11,11 +11,27 @@ import type {
 	DefineFieldOptions,
 	DefineFieldRenderContext,
 	DefineFieldResult,
-	DefineFieldResultProps,
 	FieldNameHelper,
+	FieldNameProviderProps,
 } from './types';
 
 const FieldNameContext = createContext<{ name?: string }>({});
+
+export function FieldNameProvider(
+	props: FieldNameProviderProps,
+): React.ReactElement {
+	const { name: parentFieldName } = useContext(FieldNameContext);
+
+	return (
+		<FieldNameContext.Provider
+			value={{
+				name: [parentFieldName, props.name].filter(Boolean).join('.'),
+			}}
+		>
+			{props.children}
+		</FieldNameContext.Provider>
+	);
+}
 
 export function defineField<TProps extends object = object>() {
 	return function defineFieldImpl<
@@ -41,32 +57,20 @@ export function defineField<TProps extends object = object>() {
 		React.ReactNode,
 		TProps
 	> {
-		const FieldContent = (
-			props: TProps & DefineFieldResultProps<TFieldName>,
-		) => {
+		const FieldContent = (props: TProps) => {
 			const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
-				() => ({ name: (props.overrideName || name) as TFieldName, schema }),
-				[props.overrideName, name, schema],
+				() => ({ name, schema }),
+				[name, schema],
 			);
 
 			return <>{render(context, props)}</>;
 		};
 
-		const Field = (
-			props: TProps & DefineFieldResultProps<TFieldName>,
-		): React.ReactNode => {
-			const { name: parentFieldName } = useContext(FieldNameContext);
-
+		const Field = (props: TProps): React.ReactNode => {
 			const children = (
-				<FieldNameContext.Provider
-					value={{
-						name: [parentFieldName, props.overrideName || name]
-							.filter(Boolean)
-							.join('.'),
-					}}
-				>
+				<FieldNameProvider name={name}>
 					<FieldContent {...props} />
-				</FieldNameContext.Provider>
+				</FieldNameProvider>
 			);
 
 			if (fallback) {
