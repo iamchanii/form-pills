@@ -1,8 +1,8 @@
 {
   "name": "form-pills",
   "version": "1.0.20",
-  "description": "",
-  "license": "ISC",
+  "description": "💊 Encapsulates form fields like a pill",
+  "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/iamchanii/form-pills#readme",
   "bugs": {
