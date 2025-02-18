@@ -1,5 +1,7 @@
 # form-pills
 
+![](https://badgen.net/bundlephobia/minzip/form-pills)
+
 💊 Encapsulates form fields like a pill!
 
 ## Features
@@ -10,7 +12,7 @@
 - Create self-contained, reusable field components that reduce code duplication.
 - Seamlessly integrate with libraries like react-hook-form and Zod for efficient form state management and validation.
 - Enjoy a clear, straightforward API.
-- Lightweight bundle size (brotli 552B).
+- Lightweight bundle size.
 
 ## Installation
 
