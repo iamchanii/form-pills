@@ -55,7 +55,7 @@ const NestedObjectField = defineField<{ color: string }>()({
 				/>
 				<p>{name('starCount')}</p>
 
-				<TestField />
+				<TestField overrideName={`foo[0].test`} />
 			</div>
 		);
 	},
