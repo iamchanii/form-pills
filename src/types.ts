@@ -63,7 +63,6 @@ export interface DefineFieldRenderContext<
   TSchema extends StandardSchemaV1,
   TFieldName extends string,
 > {
-  parentFieldName?: string;
   name: TFieldName;
   schema: TSchema;
 }
@@ -84,6 +83,7 @@ export interface DefineFieldOptions<
     context: DefineFieldRenderContext<TSchema, TFieldName>,
     props: TProps,
   ) => TRenderResult;
+  fallback?: TRenderResult;
 }
 
 export interface DefineFieldResult<
