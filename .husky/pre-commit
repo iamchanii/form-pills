@@ -1,1 +1,1 @@
-lint-staged
+biome check --staged --fix
