@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui/button';
+import { AddressField, EmailField, UsernameField } from '@/fields';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { AddressField, EmailField, UsernameField } from '@/fields';
 
 const formSchema = z.object({
 	...UsernameField.schemaShape,
