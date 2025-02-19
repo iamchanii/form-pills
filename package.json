@@ -1,6 +1,6 @@
 {
 	"name": "form-pills",
-	"version": "1.0.21",
+	"version": "1.0.22",
 	"description": "💊 Encapsulates form fields like a pill",
 	"license": "MIT",
 	"type": "module",
