@@ -1,20 +1,20 @@
-import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
-import { z } from 'zod';
 import {
 	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from '../components/ui/form';
-import { Input } from '../components/ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '../components/ui/select';
+} from '@/components/ui/select';
+import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
+import { z } from 'zod';
 
 export const UsernameField = defineField<{ label: string }>()({
 	name: 'username',
