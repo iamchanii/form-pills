@@ -25,7 +25,7 @@ $ pnpm add form-pills
 ## Quick Start
 
 ```tsx
-import { defineField, useFieldName, type InferParentFieldShape } from 'form-pills';
+import { defineField, useFieldName, type InferFieldShape } from 'form-pills';
 
 const UsernameField = defineField()({
   name: 'username',
@@ -39,13 +39,13 @@ const UsernameField = defineField()({
   getDefaultValues: () => 'John',
 
   render: (context) => {
-    type ParentFieldShape = InferParentFieldShape<typeof context>
+    type FieldShape = InferFieldShape<typeof context>
     // ^? { username: string }
 
     const name = useFieldName();
     // name() === 'username'
 
-    // Here you can write integrated with form library UI code
+    // Here you can write integrated with form and library UI code
   },
 })
 ```
