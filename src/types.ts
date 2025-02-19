@@ -1,37 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 
-// Vendoring from react-hook-form
-declare const $NestedValue: unique symbol;
-
-type NestedValue<TValue extends object = object> = {
-	[$NestedValue]: never;
-} & TValue;
-
-type BrowserNativeObject = Date | FileList | File;
-
-type ExtractObjects<T> = T extends infer U
-	? U extends object
-		? U
-		: never
-	: never;
-
-type DeepPartial<T> = T extends BrowserNativeObject | NestedValue
-	? T
-	: {
-			[K in keyof T]?: ExtractObjects<T[K]> extends never
-				? T[K]
-				: DeepPartial<T[K]>;
-		};
-
-type AsyncDefaultValues<TFieldValues> = (
-	payload?: unknown,
-) => Promise<TFieldValues>;
-
-export type DefaultValues<TFieldValues> =
-	TFieldValues extends AsyncDefaultValues<TFieldValues>
-		? DeepPartial<Awaited<TFieldValues>>
-		: DeepPartial<TFieldValues>;
-
 type Primitive =
 	| string
 	| number
@@ -78,7 +46,7 @@ export interface DefineFieldOptions<
 	schema: TSchema;
 	getDefaultValues?: (
 		...args: TGetDefaultValuesArgs
-	) => DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
+	) => StandardSchemaV1.InferOutput<TSchema>;
 	render: (
 		context: DefineFieldRenderContext<TSchema, TFieldName>,
 		props: TProps,
@@ -96,11 +64,11 @@ export interface DefineFieldResult<
 	(props: TProps): TRenderResult;
 	schemaShape: { [key in TFieldName]: TSchema };
 	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
-		[key in TFieldName]: DefaultValues<StandardSchemaV1.InferOutput<TSchema>>;
+		[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 	};
 }
 
-type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
+type InferFieldSchemaFromDefineFieldResult<T> = T extends DefineFieldResult<
 	infer Schema,
 	any,
 	any,
@@ -110,28 +78,33 @@ type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
 	? NonNullable<StandardSchemaV1.InferOutput<Schema>>
 	: never;
 
-type InferFieldShapeFromDefineFieldRenderContext<T> =
+type InferFieldSchemaFromDefineFieldRenderContext<T> =
 	T extends DefineFieldRenderContext<infer Schema, any>
 		? NonNullable<StandardSchemaV1.InferOutput<Schema>>
+		: never;
+
+export type InferFieldSchema<T> =
+	| InferFieldSchemaFromDefineFieldResult<T>
+	| InferFieldSchemaFromDefineFieldRenderContext<T>;
+
+type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
+	infer Schema,
+	infer FieldName,
+	any,
+	any,
+	any
+>
+	? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+	: never;
+
+type InferFieldShapeFromDefineFieldRenderContext<T> =
+	T extends DefineFieldRenderContext<infer Schema, infer FieldName>
+		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
 		: never;
 
 export type InferFieldShape<T> =
 	| InferFieldShapeFromDefineFieldResult<T>
 	| InferFieldShapeFromDefineFieldRenderContext<T>;
-
-type InferParentFieldShapeFromDefineFieldResult<T> =
-	T extends DefineFieldResult<infer Schema, infer FieldName, any, any, any>
-		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
-		: never;
-
-type InferParentFieldShapeFromDefineFieldRenderContext<T> =
-	T extends DefineFieldRenderContext<infer Schema, infer FieldName>
-		? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
-		: never;
-
-export type InferParentFieldShape<T> =
-	| InferParentFieldShapeFromDefineFieldResult<T>
-	| InferParentFieldShapeFromDefineFieldRenderContext<T>;
 
 export interface FieldNameProviderProps {
 	name: string;

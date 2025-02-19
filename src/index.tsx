@@ -1,13 +1,12 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import {
-	createContext,
 	Suspense,
+	createContext,
 	useCallback,
 	useContext,
 	useMemo,
 } from 'react';
 import type {
-	DefaultValues,
 	DefineFieldOptions,
 	DefineFieldRenderContext,
 	DefineFieldResult,
@@ -85,9 +84,7 @@ export function defineField<TProps extends object = object>() {
 				getDefaultValues
 					? { [name]: getDefaultValues(...args) }
 					: undefined) as (...args: TGetDefaultValuesArgs) => {
-				[key in TFieldName]: DefaultValues<
-					StandardSchemaV1.InferOutput<TSchema>
-				>;
+				[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 			},
 			schemaShape: { [name]: schema } as {
 				[key in TFieldName]: TSchema;
@@ -115,4 +112,7 @@ export function useFieldName<
 		: never;
 }
 
-export type { InferFieldShape, InferParentFieldShape } from './types';
+export type {
+	InferFieldShape,
+	InferFieldSchema,
+} from './types';
