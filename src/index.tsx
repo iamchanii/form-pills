@@ -80,7 +80,8 @@ export function defineField<TProps extends object = object>() {
 			fieldShape: { [name]: schema } as {
 				[key in TFieldName]: TSchema;
 			},
-			options,
+			extends: (overrideOptions: any) =>
+				defineFieldImpl({ ...options, ...overrideOptions }) as never,
 		});
 
 		return FieldResult;

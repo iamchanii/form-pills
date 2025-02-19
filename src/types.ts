@@ -66,27 +66,26 @@ export interface DefineFieldResult<
 	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
 		[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 	};
-	override: <
-		TOverrideSchema extends StandardSchemaV1 = TSchema,
-		TOverrideFieldName extends string = TFieldName,
-		TOverrideGetDefaultValuesArgs extends unknown[] = TGetDefaultValuesArgs,
-		TOverrideProps = TProps,
+	extends: <
+		TExtendSchema extends StandardSchemaV1 = TSchema,
+		TExtendFieldName extends string = TFieldName,
+		TExtendGetDefaultValuesArgs extends unknown[] = TGetDefaultValuesArgs,
 	>(
 		options: Partial<
 			DefineFieldOptions<
-				TOverrideSchema,
-				TOverrideFieldName,
-				TOverrideGetDefaultValuesArgs,
+				TExtendSchema,
+				TExtendFieldName,
+				TExtendGetDefaultValuesArgs,
 				TRenderResult,
-				TOverrideProps
+				TProps
 			>
 		>,
 	) => DefineFieldResult<
-		TOverrideSchema,
-		TOverrideFieldName,
-		TOverrideGetDefaultValuesArgs,
+		TExtendSchema,
+		TExtendFieldName,
+		TExtendGetDefaultValuesArgs,
 		TRenderResult,
-		TOverrideProps
+		TProps
 	>;
 }
 
