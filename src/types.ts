@@ -62,10 +62,32 @@ export interface DefineFieldResult<
 	TProps,
 > {
 	(props: TProps): TRenderResult;
-	schemaShape: { [key in TFieldName]: TSchema };
+	fieldShape: { [key in TFieldName]: TSchema };
 	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
 		[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 	};
+	override: <
+		TOverrideSchema extends StandardSchemaV1 = TSchema,
+		TOverrideFieldName extends string = TFieldName,
+		TOverrideGetDefaultValuesArgs extends unknown[] = TGetDefaultValuesArgs,
+		TOverrideProps = TProps,
+	>(
+		options: Partial<
+			DefineFieldOptions<
+				TOverrideSchema,
+				TOverrideFieldName,
+				TOverrideGetDefaultValuesArgs,
+				TRenderResult,
+				TOverrideProps
+			>
+		>,
+	) => DefineFieldResult<
+		TOverrideSchema,
+		TOverrideFieldName,
+		TOverrideGetDefaultValuesArgs,
+		TRenderResult,
+		TOverrideProps
+	>;
 }
 
 type InferFieldSchemaFromDefineFieldResult<T> = T extends DefineFieldResult<

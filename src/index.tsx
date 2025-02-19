@@ -1,11 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import {
-	Suspense,
-	createContext,
-	useCallback,
-	useContext,
-	useMemo,
-} from 'react';
+import { Suspense, createContext, useCallback, useContext } from 'react';
 import type {
 	DefineFieldOptions,
 	DefineFieldRenderContext,
@@ -37,31 +31,28 @@ export function defineField<TProps extends object = object>() {
 		TSchema extends StandardSchemaV1,
 		TFieldName extends string,
 		TGetDefaultValuesArgs extends unknown[],
-	>({
-		name,
-		schema,
-		getDefaultValues,
-		render,
-		fallback,
-	}: DefineFieldOptions<
-		TSchema,
-		TFieldName,
-		TGetDefaultValuesArgs,
-		React.ReactNode,
-		TProps
-	>): DefineFieldResult<
+	>(
+		options: DefineFieldOptions<
+			TSchema,
+			TFieldName,
+			TGetDefaultValuesArgs,
+			React.ReactNode,
+			TProps
+		>,
+	): DefineFieldResult<
 		TSchema,
 		TFieldName,
 		TGetDefaultValuesArgs,
 		React.ReactNode,
 		TProps
 	> {
-		const FieldContent = (props: TProps) => {
-			const context = useMemo<DefineFieldRenderContext<TSchema, TFieldName>>(
-				() => ({ name, schema }),
-				[name, schema],
-			);
+		const { name, schema, getDefaultValues, render, fallback } = options;
+		const context: DefineFieldRenderContext<TSchema, TFieldName> = {
+			name,
+			schema,
+		};
 
+		const FieldContent = (props: TProps) => {
 			return <>{render(context, props)}</>;
 		};
 
@@ -86,9 +77,10 @@ export function defineField<TProps extends object = object>() {
 					: undefined) as (...args: TGetDefaultValuesArgs) => {
 				[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 			},
-			schemaShape: { [name]: schema } as {
+			fieldShape: { [name]: schema } as {
 				[key in TFieldName]: TSchema;
 			},
+			options,
 		});
 
 		return FieldResult;

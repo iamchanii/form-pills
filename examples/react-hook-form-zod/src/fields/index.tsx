@@ -111,7 +111,7 @@ const CityField = defineField()({
 export const AddressField = defineField()({
 	name: 'address',
 	schema: z.object({
-		...CityField.schemaShape,
+		...CityField.fieldShape,
 		zip: z.string().min(5, 'Zip code must be at least 5 characters'),
 	}),
 	getDefaultValues: () => ({
