@@ -1,18 +1,21 @@
 # form-pills
 
-![](https://badgen.net/bundlephobia/minzip/form-pills)
+![](https://badgen.net/npm/v/form-pills)
+![](https://badgen.net/npm/dt/form-pills)
+![](https://badgen.net/bundlephobia/minzip/form-pills) 
+![](https://badgen.net/npm/license/form-pills)
 
 💊 Encapsulates form fields like a pill!
 
 ## Features
 
-- Define a field's name, validation schema, default values, and UI all in one place.
-- Easily build complex forms by nesting field definitions with providers and dynamic name generation.
-- Leverage TypeScript and [Standard Schema](https://github.com/standard-schema/standard-schema) for automatic type inference and data validation.
-- Create self-contained, reusable field components that reduce code duplication.
-- Seamlessly integrate with libraries like react-hook-form and Zod for efficient form state management and validation.
-- Enjoy a clear, straightforward API.
-- Lightweight bundle size.
+- **All-in-One Definition**: Define a field's name, validation schema, default values, and UI in a single, unified declaration.
+- **Modular Complexity**: Effortlessly build complex forms by nesting field definitions with providers and dynamic name generation.
+- **Smart Type Inference**: Harness the power of TypeScript and Standard Schema for automatic type inference and robust data validation.
+- **Reusable Components**: Create self-contained field components that encapsulate logic and minimize code duplication.
+- **Seamless Integration**: Easily integrate with popular libraries like react-hook-form and Zod for efficient form state management and validation.
+- **Intuitive API**: Enjoy a clear, straightforward API that makes form development a breeze.
+- **Ultra-Lightweight**: Benefit from an exceptionally small bundle size, ensuring fast load times and minimal overhead.
 
 ## Installation
 
