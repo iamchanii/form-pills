@@ -1,6 +1,7 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { Suspense, createContext, useCallback, useContext } from 'react';
 import type {
+	DeepOptional,
 	DefineFieldOptions,
 	DefineFieldRenderContext,
 	DefineFieldResult,
@@ -30,22 +31,9 @@ export function defineField<TProps extends object = object>() {
 	return function defineFieldImpl<
 		TSchema extends StandardSchemaV1,
 		TFieldName extends string,
-		TGetDefaultValuesArgs extends unknown[],
 	>(
-		options: DefineFieldOptions<
-			TSchema,
-			TFieldName,
-			TGetDefaultValuesArgs,
-			React.ReactNode,
-			TProps
-		>,
-	): DefineFieldResult<
-		TSchema,
-		TFieldName,
-		TGetDefaultValuesArgs,
-		React.ReactNode,
-		TProps
-	> {
+		options: DefineFieldOptions<TSchema, TFieldName, React.ReactNode, TProps>,
+	): DefineFieldResult<TSchema, TFieldName, React.ReactNode, TProps> {
 		const { name, schema, getDefaultValues, render, fallback } = options;
 		const context: DefineFieldRenderContext<TSchema, TFieldName> = {
 			name,
@@ -71,20 +59,23 @@ export function defineField<TProps extends object = object>() {
 		};
 
 		const FieldResult = Object.assign(Field, {
-			getDefaultValues: ((...args: TGetDefaultValuesArgs) =>
+			getDefaultValues: (
+				defaultValues?: DeepOptional<StandardSchemaV1.InferOutput<TSchema>>,
+			) =>
 				getDefaultValues
-					? { [name]: getDefaultValues(...args) }
-					: undefined) as (...args: TGetDefaultValuesArgs) => {
-				[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
-			},
-			fieldShape: { [name]: schema } as {
-				[key in TFieldName]: TSchema;
-			},
+					? { [name]: getDefaultValues(defaultValues) }
+					: undefined,
+			fieldShape: { [name]: schema },
 			extends: (overrideOptions: any) =>
-				defineFieldImpl({ ...options, ...overrideOptions }) as never,
+				defineFieldImpl({ ...options, ...overrideOptions }),
 		});
 
-		return FieldResult;
+		return FieldResult as DefineFieldResult<
+			TSchema,
+			TFieldName,
+			React.ReactNode,
+			TProps
+		>;
 	};
 }
 

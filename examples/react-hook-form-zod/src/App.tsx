@@ -5,9 +5,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
-	...UsernameField.schemaShape,
-	...EmailField.schemaShape,
-	...AddressField.schemaShape,
+	...UsernameField.fieldShape,
+	...EmailField.fieldShape,
+	...AddressField.fieldShape,
 });
 
 type FormSchemaType = z.infer<typeof formSchema>;
