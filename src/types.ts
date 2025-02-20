@@ -1,15 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 
-export type DeepOptional<T> = T extends Date | Function
-	? T
-	: T extends (infer R)[]
-		? DeepOptional<R>[]
-		: T extends Record<PropertyKey, any>
-			? {
-					[K in keyof T]?: DeepOptional<T[K]>;
-				}
-			: T;
-
 type Primitive =
 	| string
 	| number
@@ -48,13 +38,14 @@ export interface DefineFieldRenderContext<
 export interface DefineFieldOptions<
 	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
+	TGetDefaultValuesArgs extends unknown[],
 	TRenderResult,
 	TProps,
 > {
 	name: TFieldName;
 	schema: TSchema;
 	getDefaultValues?: (
-		defaultValues?: DeepOptional<StandardSchemaV1.InferOutput<TSchema>>,
+		...args: TGetDefaultValuesArgs
 	) => StandardSchemaV1.InferOutput<TSchema>;
 	render: (
 		context: DefineFieldRenderContext<TSchema, TFieldName>,
@@ -66,26 +57,33 @@ export interface DefineFieldOptions<
 export interface DefineFieldResult<
 	TSchema extends StandardSchemaV1,
 	TFieldName extends string,
+	TGetDefaultValuesArgs extends unknown[],
 	TRenderResult,
 	TProps,
 > {
 	(props: TProps): TRenderResult;
 	fieldShape: { [key in TFieldName]: TSchema };
-	getDefaultValues: (
-		defaultValues?: DeepOptional<StandardSchemaV1.InferOutput<TSchema>>,
-	) => {
+	getDefaultValues: (...args: TGetDefaultValuesArgs) => {
 		[key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
 	};
 	extends: <
 		TExtendSchema extends StandardSchemaV1 = TSchema,
 		TExtendFieldName extends string = TFieldName,
+		TExtendGetDefaultValuesArgs extends unknown[] = TGetDefaultValuesArgs,
 	>(
 		options: Partial<
-			DefineFieldOptions<TExtendSchema, TExtendFieldName, TRenderResult, TProps>
+			DefineFieldOptions<
+				TExtendSchema,
+				TExtendFieldName,
+				TExtendGetDefaultValuesArgs,
+				TRenderResult,
+				TProps
+			>
 		>,
 	) => DefineFieldResult<
 		TExtendSchema,
 		TExtendFieldName,
+		TExtendGetDefaultValuesArgs,
 		TRenderResult,
 		TProps
 	>;
@@ -93,6 +91,7 @@ export interface DefineFieldResult<
 
 type InferFieldSchemaFromDefineFieldResult<T> = T extends DefineFieldResult<
 	infer Schema,
+	any,
 	any,
 	any,
 	any
@@ -112,6 +111,7 @@ export type InferFieldSchema<T> =
 type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
 	infer Schema,
 	infer FieldName,
+	any,
 	any,
 	any
 >
