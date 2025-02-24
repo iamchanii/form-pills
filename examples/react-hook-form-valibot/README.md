@@ -1,2 +1,2 @@
-# Example: React Hook Form + Zod
+# Example: React Hook Form + Valibot
 
