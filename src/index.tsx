@@ -1,111 +1,111 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { Suspense, createContext, useCallback, useContext } from 'react';
 import type {
-	DefineFieldOptions,
-	DefineFieldRenderContext,
-	DefineFieldResult,
-	FieldNameHelper,
-	FieldNameProviderProps,
+  DefineFieldOptions,
+  DefineFieldRenderContext,
+  DefineFieldResult,
+  FieldNameHelper,
+  FieldNameProviderProps,
 } from './types';
 
 const FieldNameContext = createContext<{ name?: string }>({});
 
 export function FieldNameProvider(
-	props: FieldNameProviderProps,
+  props: FieldNameProviderProps,
 ): React.ReactElement {
-	const { name: parentFieldName } = useContext(FieldNameContext);
+  const { name: parentFieldName } = useContext(FieldNameContext);
 
-	return (
-		<FieldNameContext.Provider
-			value={{
-				name: [parentFieldName, props.name].filter(Boolean).join('.'),
-			}}
-		>
-			{props.children}
-		</FieldNameContext.Provider>
-	);
+  return (
+    <FieldNameContext.Provider
+      value={{
+        name: [parentFieldName, props.name].filter(Boolean).join('.'),
+      }}
+    >
+      {props.children}
+    </FieldNameContext.Provider>
+  );
 }
 
 export function defineField<TProps extends object = object>() {
-	return function defineFieldImpl<
-		TSchema extends StandardSchemaV1,
-		TFieldName extends string,
-		TGetDefaultValuesArgs extends unknown[],
-	>(
-		options: DefineFieldOptions<
-			TSchema,
-			TFieldName,
-			TGetDefaultValuesArgs,
-			React.ReactNode,
-			TProps
-		>,
-	): DefineFieldResult<
-		TSchema,
-		TFieldName,
-		TGetDefaultValuesArgs,
-		React.ReactNode,
-		TProps
-	> {
-		const { name, schema, getDefaultValues, render, fallback } = options;
-		const context: DefineFieldRenderContext<TSchema, TFieldName> = {
-			name,
-			schema,
-		};
+  return function defineFieldImpl<
+    TSchema extends StandardSchemaV1,
+    TFieldName extends string,
+    TGetDefaultValuesArgs extends unknown[],
+  >(
+    options: DefineFieldOptions<
+      TSchema,
+      TFieldName,
+      TGetDefaultValuesArgs,
+      React.ReactNode,
+      TProps
+    >,
+  ): DefineFieldResult<
+    TSchema,
+    TFieldName,
+    TGetDefaultValuesArgs,
+    React.ReactNode,
+    TProps
+  > {
+    const { name, schema, getDefaultValues, render, fallback } = options;
+    const context: DefineFieldRenderContext<TSchema, TFieldName> = {
+      name,
+      schema,
+    };
 
-		const FieldContent = (props: TProps) => {
-			return <>{render(context, props)}</>;
-		};
+    const FieldContent = (props: TProps) => {
+      return <>{render(context, props)}</>;
+    };
 
-		const Field = (props: TProps): React.ReactNode => {
-			const children = (
-				<FieldNameProvider name={name}>
-					<FieldContent {...props} />
-				</FieldNameProvider>
-			);
+    const Field = (props: TProps): React.ReactNode => {
+      const children = (
+        <FieldNameProvider name={name}>
+          <FieldContent {...props} />
+        </FieldNameProvider>
+      );
 
-			if (fallback) {
-				return <Suspense fallback={fallback}>{children}</Suspense>;
-			}
+      if (fallback) {
+        return <Suspense fallback={fallback}>{children}</Suspense>;
+      }
 
-			return children;
-		};
+      return children;
+    };
 
-		const FieldResult = Object.assign(Field, {
-			getDefaultValues: (...args: TGetDefaultValuesArgs) =>
-				getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
-			fieldShape: { [name]: schema },
-			extends: (extendsOptions: any) =>
-				defineFieldImpl({ ...options, ...extendsOptions }),
-		});
+    const FieldResult = Object.assign(Field, {
+      getDefaultValues: (...args: TGetDefaultValuesArgs) =>
+        getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
+      fieldShape: { [name]: schema },
+      extends: (extendsOptions: any) =>
+        defineFieldImpl({ ...options, ...extendsOptions }),
+    });
 
-		return FieldResult as DefineFieldResult<
-			TSchema,
-			TFieldName,
-			TGetDefaultValuesArgs,
-			React.ReactNode,
-			TProps
-		>;
-	};
+    return FieldResult as DefineFieldResult<
+      TSchema,
+      TFieldName,
+      TGetDefaultValuesArgs,
+      React.ReactNode,
+      TProps
+    >;
+  };
 }
 
 export function useFieldName<
-	TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
+  TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
 >(context: TDefineFieldRenderContext) {
-	const { name } = useContext(FieldNameContext);
+  const { name } = useContext(FieldNameContext);
 
-	return useCallback(
-		// @ts-expect-error
-		(fieldName) => [name || context.name, fieldName].filter(Boolean).join('.'),
-		[context, name],
-	) as TDefineFieldRenderContext extends DefineFieldRenderContext<
-		infer Schema,
-		infer FieldName
-	>
-		? FieldNameHelper<FieldName, StandardSchemaV1.InferOutput<Schema>>
-		: never;
+  return useCallback(
+    // @ts-expect-error
+    (fieldName) => [name || context.name, fieldName].filter(Boolean).join('.'),
+    [context, name],
+  ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
+    infer Schema,
+    infer FieldName
+  >
+    ? FieldNameHelper<FieldName, StandardSchemaV1.InferOutput<Schema>>
+    : never;
 }
 
 export type {
-	InferFieldShape,
-	InferFieldSchema,
+  InferFieldShape,
+  InferFieldSchema,
 } from './types';

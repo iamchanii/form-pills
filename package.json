@@ -1,47 +1,47 @@
 {
-	"name": "form-pills",
-	"version": "1.0.24",
-	"description": "💊 Encapsulates form fields like a pill",
-	"license": "MIT",
-	"type": "module",
-	"homepage": "https://github.com/iamchanii/form-pills#readme",
-	"bugs": {
-		"url": "https://github.com/iamchanii/form-pills/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/iamchanii/form-pills.git"
-	},
-	"files": ["dist"],
-	"main": "./dist/index.js",
-	"module": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"exports": {
-		".": "./dist/index.js"
-	},
-	"scripts": {
-		"build": "tsdown",
-		"prepublishOnly": "tsdown",
-		"prepare": "lefthook install"
-	},
-	"author": "Chanhee Lee <contact@imch.dev>",
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@total-typescript/tsconfig": "^1.0.4",
-		"@types/react": "^19.0.8",
-		"lefthook": "^1.10.10",
-		"oxc-transform": "^0.49.0",
-		"react": "^19.0.0",
-		"tsdown": "^0.5.9",
-		"typescript": "^5.7.3"
-	},
-	"dependencies": {
-		"@standard-schema/spec": "^1.0.0"
-	},
-	"peerDependencies": {
-		"react": "^17 || ^18 || ^19"
-	},
-	"lint-staged": {
-		"*.{ts,tsx,json,md}": ["biome check --fix --no-errors-on-unmatched"]
-	}
+  "name": "form-pills",
+  "version": "1.0.24",
+  "description": "💊 Encapsulates form fields like a pill",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/iamchanii/form-pills#readme",
+  "bugs": {
+    "url": "https://github.com/iamchanii/form-pills/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamchanii/form-pills.git"
+  },
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepublishOnly": "tsdown",
+    "prepare": "lefthook install"
+  },
+  "author": "Chanhee Lee <contact@imch.dev>",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@total-typescript/tsconfig": "^1.0.4",
+    "@types/react": "^19.0.8",
+    "lefthook": "^1.10.10",
+    "oxc-transform": "^0.49.0",
+    "react": "^19.0.0",
+    "tsdown": "^0.5.9",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@standard-schema/spec": "^1.0.0"
+  },
+  "peerDependencies": {
+    "react": "^17 || ^18 || ^19"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,json,md}": ["biome check --fix --no-errors-on-unmatched"]
+  }
 }
