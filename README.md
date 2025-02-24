@@ -170,7 +170,9 @@ In this example, `CityField` and `ZipField` will have their field names automati
 
 ## Examples
 
-- [React Hook Form + Zod](./examples/react-hook-form-zod/)
+- [React Hook Form + Zod](./examples/react-hook-form-zod/) [(Open in StackBlitz)](https://stackblitz.com/github.com/iamchanii/form-pills/tree/main/examples/react-hook-form-zod)
+- [React Hook Form + Valibot](./examples/react-hook-form-valibot/) [(Open in StackBlitz)](https://stackblitz.com/github.com/iamchanii/form-pills/tree/main/examples/react-hook-form-valibot)
+
 
 ## License
 

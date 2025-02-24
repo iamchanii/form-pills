@@ -1,0 +1,58 @@
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
+import { z } from 'zod';
+
+export const CityField = defineField()({
+  name: 'city',
+  schema: z.string().min(1, 'City is required'),
+  getDefaultValues: () => 'New York',
+  render: (context) => {
+    type FieldShape = InferFieldShape<typeof context>;
+    const name = useFieldName(context);
+
+    return (
+      <FormField<FieldShape, 'city'>
+        name={name()}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>City</FormLabel>
+            <Select {...field} onValueChange={field.onChange}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {[
+                  'New York',
+                  'Los Angeles',
+                  'Chicago',
+                  'Houston',
+                  'Phoenix',
+                ].map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  },
+});

@@ -1,18 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import * as v from 'valibot';
 import { AddressField } from './fields/address-field';
 import { EmailField } from './fields/email-field';
 import { UsernameField } from './fields/username-field';
 
-const formSchema = z.object({
+const formSchema = v.object({
   ...UsernameField.fieldShape,
   ...EmailField.fieldShape,
   ...AddressField.fieldShape,
 });
 
-type FormSchemaType = z.infer<typeof formSchema>;
+type FormSchemaType = v.InferOutput<typeof formSchema>;
 
 export function App() {
   const form = useForm<FormSchemaType>({

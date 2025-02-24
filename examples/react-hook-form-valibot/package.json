@@ -1,5 +1,5 @@
 {
-  "name": "react-hook-form-zod",
+  "name": "react-hook-form-valibot",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,7 +22,7 @@
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1"
+    "valibot": "1.0.0-rc.1"
   },
   "devDependencies": {
     "@total-typescript/tsconfig": "^1.0.4",
