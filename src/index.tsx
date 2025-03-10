@@ -95,7 +95,7 @@ export function useFieldName<
 
   return useCallback(
     // @ts-expect-error
-    (fieldName) => [name || context.name, fieldName].filter(Boolean).join('.'),
+    (fieldName) => [name ?? context.name, fieldName].filter(Boolean).join('.'),
     [context, name],
   ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
     infer Schema,
