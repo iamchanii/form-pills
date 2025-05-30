@@ -33,6 +33,10 @@ export interface DefineFieldRenderContext<
 > {
   name: TFieldName;
   schema: TSchema;
+  getFieldName: FieldNameHelper<
+    TFieldName,
+    StandardSchemaV1.InferOutput<TSchema>
+  >;
 }
 
 export interface DefineFieldOptions<
