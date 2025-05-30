@@ -1,11 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import {
-  Suspense,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-} from 'react';
+import { Suspense, createContext, useCallback, useContext } from 'react';
 import type {
   DefineFieldOptions,
   DefineFieldRenderContext,
@@ -60,14 +54,11 @@ export function defineField<TProps extends object = object>() {
         schema,
       });
 
-      const context: DefineFieldRenderContext<TSchema, TFieldName> = useMemo(
-        () => ({
-          name,
-          schema,
-          getFieldName,
-        }),
-        [getFieldName],
-      );
+      const context: DefineFieldRenderContext<TSchema, TFieldName> = {
+        name,
+        schema,
+        getFieldName,
+      };
 
       return <>{render(context, props)}</>;
     };
