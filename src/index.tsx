@@ -49,10 +49,13 @@ export function defineField<TProps extends object = object>() {
     const { name, schema, getDefaultValues, render, fallback } = options;
 
     const FieldContent = (props: TProps) => {
-      const getFieldName = useFieldName({
-        name,
-        schema,
-      });
+      const { name: parentFieldName } = useContext(FieldNameContext);
+      const baseName = parentFieldName ?? name;
+
+      const getFieldName = useCallback(
+        (fieldName: string) => [baseName, fieldName].filter(Boolean).join('.'),
+        [baseName],
+      ) as FieldNameHelper<TFieldName, StandardSchemaV1.InferOutput<TSchema>>;
 
       const context: DefineFieldRenderContext<TSchema, TFieldName> = {
         name,
@@ -96,7 +99,7 @@ export function defineField<TProps extends object = object>() {
 }
 
 /**
- * @deprecated `useFieldName()` is deprecated. Use `context.getFIeldName()` instaed.
+ * @deprecated `useFieldName()` is deprecated. Use `context.getFieldName()` instead.
  */
 export function useFieldName<
   TDefineFieldRenderContext extends Omit<
