@@ -95,6 +95,9 @@ export function defineField<TProps extends object = object>() {
   };
 }
 
+/**
+ * @deprecated `useFieldName()` is deprecated. Use `context.getFIeldName()` instaed.
+ */
 export function useFieldName<
   TDefineFieldRenderContext extends Omit<
     DefineFieldRenderContext<any, any>,

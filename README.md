@@ -28,7 +28,7 @@ $ pnpm add form-pills
 ## Quick Start
 
 ```tsx
-import { defineField, useFieldName, type InferFieldShape } from 'form-pills';
+import { defineField, type InferFieldShape } from 'form-pills';
 
 const UsernameField = defineField()({
   name: 'username',
@@ -45,7 +45,7 @@ const UsernameField = defineField()({
     type FieldShape = InferFieldShape<typeof context>
     // ^? { username: string }
 
-    const name = useFieldName();
+    const name = context.getFieldName();
     // name() === 'username'
 
     // Here you can write integrated with form and library UI code
@@ -85,11 +85,11 @@ MyField.extends({ /* ... */ }) // Extend or override parts of the field
 ```
 
 
-### Hooks
+### Context
 
-#### `useFieldName(context)`
+#### `getFieldName()`
 
-The `useFieldName` hook provides a helper function to generate full field names based on a given context. This is particularly useful when working with nested fields, as it dynamically constructs field names by combining a prefix with the specific field identifier.
+The `context.getFieldName` method provides a helper function to generate full field names. This is particularly useful when working with nested fields, as it dynamically constructs field names by combining a prefix with the specific field identifier.
 
 **Example:**
 
@@ -98,7 +98,7 @@ const MyField = defineField()({
   name: 'myField',
   // ...
   render: (context, props) => {
-    const fieldName = useFieldName(context);
+    const fieldName = context.getFieldName();
     invariant(fieldName() === 'myField')
     invariant(fieldName('subField') === 'myField.subField')
   },
