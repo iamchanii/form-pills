@@ -1,5 +1,11 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import { Suspense, createContext, useCallback, useContext } from 'react';
+import {
+  Suspense,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import type {
   DefineFieldOptions,
   DefineFieldRenderContext,
@@ -47,12 +53,22 @@ export function defineField<TProps extends object = object>() {
     TProps
   > {
     const { name, schema, getDefaultValues, render, fallback } = options;
-    const context: DefineFieldRenderContext<TSchema, TFieldName> = {
-      name,
-      schema,
-    };
 
     const FieldContent = (props: TProps) => {
+      const getFieldName = useFieldName({
+        name,
+        schema,
+      });
+
+      const context: DefineFieldRenderContext<TSchema, TFieldName> = useMemo(
+        () => ({
+          name,
+          schema,
+          getFieldName,
+        }),
+        [getFieldName],
+      );
+
       return <>{render(context, props)}</>;
     };
 
@@ -89,7 +105,10 @@ export function defineField<TProps extends object = object>() {
 }
 
 export function useFieldName<
-  TDefineFieldRenderContext extends DefineFieldRenderContext<any, any>,
+  TDefineFieldRenderContext extends Omit<
+    DefineFieldRenderContext<any, any>,
+    'getFieldName'
+  >,
 >(context: TDefineFieldRenderContext) {
   const { name } = useContext(FieldNameContext);
 
@@ -105,7 +124,4 @@ export function useFieldName<
     : never;
 }
 
-export type {
-  InferFieldShape,
-  InferFieldSchema,
-} from './types';
+export type { InferFieldShape, InferFieldSchema } from './types';
