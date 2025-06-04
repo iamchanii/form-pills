@@ -6,7 +6,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
+import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
 export const UsernameField = defineField<{ label: string }>()({
@@ -15,11 +15,10 @@ export const UsernameField = defineField<{ label: string }>()({
   getDefaultValues: () => 'John',
   render: (context, props) => {
     type FieldShape = InferFieldShape<typeof context>;
-    const name = useFieldName(context);
 
     return (
       <FormField<FieldShape, 'username'>
-        name={name()}
+        name={context.getFieldName()}
         render={({ field }) => (
           <FormItem>
             <FormLabel>{props.label}</FormLabel>

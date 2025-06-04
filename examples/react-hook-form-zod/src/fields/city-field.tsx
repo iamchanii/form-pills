@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
+import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
 export const CityField = defineField()({
@@ -21,11 +21,10 @@ export const CityField = defineField()({
   getDefaultValues: () => 'New York',
   render: (context) => {
     type FieldShape = InferFieldShape<typeof context>;
-    const name = useFieldName(context);
 
     return (
       <FormField<FieldShape, 'city'>
-        name={name()}
+        name={context.getFieldName()}
         render={({ field }) => (
           <FormItem>
             <FormLabel>City</FormLabel>

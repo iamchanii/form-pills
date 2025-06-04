@@ -6,7 +6,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { type InferFieldShape, defineField, useFieldName } from 'form-pills';
+import { type InferFieldShape, defineField } from 'form-pills';
 import * as v from 'valibot';
 
 export const ZipcodeField = defineField()({
@@ -18,11 +18,10 @@ export const ZipcodeField = defineField()({
   getDefaultValues: () => '10001',
   render: (context) => {
     type FieldShape = InferFieldShape<typeof context>;
-    const name = useFieldName(context);
 
     return (
       <FormField<FieldShape, 'zipcode'>
-        name={name()}
+        name={context.getFieldName()}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Zip Code</FormLabel>

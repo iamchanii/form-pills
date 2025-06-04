@@ -58,8 +58,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       form-pills:
-        specifier: ^1.0.25
-        version: 1.0.25(react@19.0.0)
+        specifier: ../..
+        version: link:../..
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.0.0)
@@ -134,8 +134,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       form-pills:
-        specifier: ^1.0.25
-        version: 1.0.25(react@19.0.0)
+        specifier: ../..
+        version: link:../..
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.0.0)
@@ -1297,11 +1297,6 @@ packages:
   foreground-child@3.3.0:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
     engines: {node: '>=14'}
-
-  form-pills@1.0.25:
-    resolution: {integrity: sha512-FE9BK+toZMAIyEFmIxLXcipwDxx/C9kAmQuFvHayaqrPEbCV/us5pttvuJQCUxDraJ/sEjZaq78Cs23JbOiiFQ==}
-    peerDependencies:
-      react: ^17 || ^18 || ^19
 
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
@@ -2953,11 +2948,6 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
-
-  form-pills@1.0.25(react@19.0.0):
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      react: 19.0.0
 
   fraction.js@4.3.7: {}
 

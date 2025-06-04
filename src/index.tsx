@@ -1,11 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import {
-  Suspense,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-} from 'react';
+import { Suspense, createContext, useContext, useMemo } from 'react';
 import type {
   DefineFieldOptions,
   DefineFieldRenderContext,
@@ -105,29 +99,6 @@ export function defineField<TProps extends object = object>() {
       TProps
     >;
   };
-}
-
-/**
- * @deprecated No longer needed. `getFieldName` is now internalized in `defineField`.
- */
-export function useFieldName<
-  TDefineFieldRenderContext extends Omit<
-    DefineFieldRenderContext<any, any>,
-    'getFieldName'
-  >,
->(context: TDefineFieldRenderContext) {
-  const { name } = useContext(FieldNameContext);
-
-  return useCallback(
-    // @ts-expect-error
-    (fieldName) => [name ?? context.name, fieldName].filter(Boolean).join('.'),
-    [context, name],
-  ) as TDefineFieldRenderContext extends DefineFieldRenderContext<
-    infer Schema,
-    infer FieldName
-  >
-    ? FieldNameHelper<FieldName, StandardSchemaV1.InferOutput<Schema>>
-    : never;
 }
 
 export type { InferFieldShape, InferFieldSchema } from './types';
