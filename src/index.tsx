@@ -1,5 +1,11 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import { Suspense, createContext, useCallback, useContext } from 'react';
+import {
+  Suspense,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import type {
   DefineFieldOptions,
   DefineFieldRenderContext,
@@ -49,16 +55,22 @@ export function defineField<TProps extends object = object>() {
     const { name, schema, getDefaultValues, render, fallback } = options;
 
     const FieldContent = (props: TProps) => {
-      const getFieldName = useFieldName({
-        name,
-        schema,
-      });
+      const { name: parentFieldName } = useContext(FieldNameContext);
+      const baseName = parentFieldName ?? name;
 
-      const context: DefineFieldRenderContext<TSchema, TFieldName> = {
-        name,
-        schema,
-        getFieldName,
-      };
+      const context = useMemo(() => {
+        const getFieldName: FieldNameHelper<
+          TFieldName,
+          StandardSchemaV1.InferOutput<TSchema>
+        > = (fieldName?: TFieldName) =>
+          [baseName, fieldName].filter(Boolean).join('.') as never;
+
+        return {
+          name,
+          schema,
+          getFieldName,
+        } satisfies DefineFieldRenderContext<TSchema, TFieldName>;
+      }, [baseName]);
 
       return <>{render(context, props)}</>;
     };
@@ -96,7 +108,7 @@ export function defineField<TProps extends object = object>() {
 }
 
 /**
- * @deprecated `useFieldName()` is deprecated. Use `context.getFIeldName()` instaed.
+ * @deprecated No longer needed. `getFieldName` is now internalized in `defineField`.
  */
 export function useFieldName<
   TDefineFieldRenderContext extends Omit<
