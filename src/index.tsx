@@ -84,9 +84,16 @@ export function defineField<TProps extends object = object>() {
     };
 
     const FieldResult = Object.assign(Field, {
-      getDefaultValues: (...args: TGetDefaultValuesArgs) =>
-        getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
-      fieldShape: { [name]: schema },
+      getDefaultValues: (...args: TGetDefaultValuesArgs) => {
+        if (!getDefaultValues) return undefined;
+
+        if (name) {
+          return { [name]: getDefaultValues(...args) };
+        }
+
+        return getDefaultValues(...args);
+      },
+      fieldShape: name ? { [name]: schema } : schema,
       extends: (extendsOptions: any) =>
         defineFieldImpl({ ...options, ...extendsOptions }),
     });

@@ -70,7 +70,7 @@ and UI render function—all in one place. It returns a function that not only r
 
 ```tsx
 const MyField = defineField<{ label: string }>()({
-  name: 'myField',
+  name: 'myField', // If you don't provide a name, this field will never affect the chain of field names.
   schema: mySchema,
   getDefaultValues: () => defaultValue,
   render: (context, props /* { label: string } */) => {

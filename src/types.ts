@@ -31,7 +31,7 @@ export interface DefineFieldRenderContext<
   TSchema extends StandardSchemaV1,
   TFieldName extends string,
 > {
-  name: TFieldName;
+  name?: TFieldName;
   schema: TSchema;
   getFieldName: FieldNameHelper<
     TFieldName,
@@ -46,7 +46,7 @@ export interface DefineFieldOptions<
   TRenderResult,
   TProps,
 > {
-  name: TFieldName;
+  name?: TFieldName;
   schema: TSchema;
   getDefaultValues?: (
     ...args: TGetDefaultValuesArgs
@@ -132,6 +132,6 @@ export type InferFieldShape<T> =
   | InferFieldShapeFromDefineFieldRenderContext<T>;
 
 export interface FieldNameProviderProps {
-  name: string;
+  name?: string;
   children: any;
 }
