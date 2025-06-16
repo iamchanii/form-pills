@@ -30,7 +30,7 @@ $ pnpm add form-pills
 ```tsx
 import { defineField, type InferFieldShape } from 'form-pills';
 
-const UsernameField = defineField()({
+const UsernameField = defineField({
   name: 'username',
 
   // You can use any schema validation library that supports Standard Schema!
@@ -69,11 +69,11 @@ and UI render function—all in one place. It returns a function that not only r
 **Example:**
 
 ```tsx
-const MyField = defineField<{ label: string }>()({
+const MyField = defineField({
   name: 'myField',
   schema: mySchema,
   getDefaultValues: () => defaultValue,
-  render: (context, props /* { label: string } */) => {
+  render: (context, props: { label: string; }) => {
     // Your rendering logic here
   },
 });
@@ -94,7 +94,7 @@ The `context.getFieldName` method provides a helper function to generate full fi
 **Example:**
 
 ```tsx
-const MyField = defineField()({
+const MyField = defineField({
   name: 'myField',
   // ...
   render: (context, props) => {
@@ -114,7 +114,7 @@ const MyField = defineField()({
 **Example:**
 
 ```tsx
-const MyField = defineField()({
+const MyField = defineField({
   name: 'myField',
   schema: z.string(),
   render: (context, props) => {
@@ -134,7 +134,7 @@ type FieldShape = InferFieldShape<typeof MyField>
 **Example:**
 
 ```tsx
-const MyField = defineField()({
+const MyField = defineField({
   name: 'myField',
   schema: z.string(),
   render: (context, props) => {

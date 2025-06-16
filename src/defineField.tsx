@@ -1,13 +1,13 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type React from 'react';
 import { Suspense, useMemo } from 'react';
-import { FieldNameProvider, useFieldName } from './core/fieldName';
+import { FieldNameProvider, useFieldName } from './fieldName';
 import type {
   FieldNameHelper,
   FieldOptions,
   FieldRenderCtx,
   FieldResult,
-} from './core/types';
+} from './types';
 
 export function defineField<
   TName extends string,

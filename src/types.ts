@@ -1,4 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
+import type React from 'react';
 
 type Primitive =
   | string
@@ -38,7 +39,6 @@ export interface FieldNameHelper<Prefix extends string, Shape> {
   <P extends Paths<Shape>>(path: P): Prefix extends '' ? P : `${Prefix}.${P}`;
 }
 
-// Public APIs
 export interface FieldRenderCtx<
   TSchema extends StandardSchemaV1,
   TName extends string,
@@ -108,5 +108,5 @@ export type InferFieldShape<T> = T extends FieldResult<
 
 export type FieldNameProviderProps = {
   name: string;
-  children: any;
+  children: React.ReactNode;
 };
