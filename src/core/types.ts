@@ -17,10 +17,12 @@ type Join<
   Path extends string | number,
 > = Path extends '' | never ? `${Key}` : `${Key}.${Path}`;
 
+type MAX_PATHS_DEPTH = 10;
+
 export type Paths<
   T,
   Depth extends ReadonlyArray<never> = [],
-> = Depth['length'] extends 10
+> = Depth['length'] extends MAX_PATHS_DEPTH
   ? string
   : T extends Primitive
     ? ''
