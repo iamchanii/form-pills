@@ -52,7 +52,7 @@ export interface FieldOptions<
   TSchema extends StandardSchemaV1,
   TName extends string,
   Args extends unknown[],
-  TResult,
+  TResult extends React.ReactNode,
   TProps,
 > {
   name: TName;
@@ -66,7 +66,7 @@ export interface FieldResult<
   TSchema extends StandardSchemaV1,
   TName extends string,
   Args extends unknown[],
-  TResult,
+  TResult extends React.ReactNode,
   TProps,
 > {
   (props: TProps): TResult;

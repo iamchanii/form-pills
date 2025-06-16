@@ -13,7 +13,7 @@ export function defineField<
   TName extends string,
   TSchema extends StandardSchemaV1,
   TArgs extends unknown[] = [],
-  TResult = React.ReactNode,
+  TResult extends React.ReactNode = React.ReactNode,
   TProps extends object = {},
 >(
   options: FieldOptions<TSchema, TName, TArgs, TResult, TProps>,
@@ -32,7 +32,7 @@ export function defineField<
       return { name, schema, getFieldName: helper };
     }, [base]);
 
-    return <>{render(ctx, props) as React.ReactNode}</>;
+    return <>{render(ctx, props)}</>;
   };
 
   const Field: React.FC<TProps> = (props) => {
@@ -41,17 +41,13 @@ export function defineField<
         <FieldContent {...props} />
       </FieldNameProvider>
     );
-    return fallback ? (
-      <Suspense fallback={fallback as React.ReactNode}>{body}</Suspense>
-    ) : (
-      body
-    );
+    return fallback ? <Suspense fallback={fallback}>{body}</Suspense> : body;
   };
 
   return Object.assign(Field, {
     fieldShape: { [name]: schema } as const,
-    getDefaultValues: (...a: TArgs) =>
-      getDefaultValues ? { [name]: getDefaultValues(...a) } : undefined,
+    getDefaultValues: (...args: TArgs) =>
+      getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
     extends: (extra: Partial<typeof options>) =>
       defineField({ ...options, ...extra }),
   }) as unknown as FieldResult<TSchema, TName, TArgs, TResult, TProps>;
