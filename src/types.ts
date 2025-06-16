@@ -11,102 +11,128 @@ type Primitive =
   | undefined
   | any[];
 
-type Keys<T> = T extends T ? keyof T : never;
+type KeysOfUnion<T> = T extends T ? keyof T : never;
 
-type Join<
-  Key extends string | number,
-  Path extends string | number,
-> = Path extends '' | never ? `${Key}` : `${Key}.${Path}`;
+type KeyOfFieldShape<T> = T extends Primitive
+  ? string | number
+  : KeysOfUnion<T>;
 
-type MAX_PATHS_DEPTH = 10;
-
-export type Paths<
-  T,
-  Depth extends ReadonlyArray<never> = [],
-> = Depth['length'] extends MAX_PATHS_DEPTH
-  ? string
-  : T extends Primitive
-    ? ''
-    : {
-        [K in Extract<Keys<T>, string>]: Join<
-          K,
-          Paths<T[K], [...Depth, never]>
-        >;
-      }[Extract<Keys<T>, string>];
-
-export interface FieldNameHelper<Prefix extends string, Shape> {
-  (): Prefix;
-  <P extends Paths<Shape>>(path: P): Prefix extends '' ? P : `${Prefix}.${P}`;
+export interface FieldNameHelper<TFieldNamePrefix extends string, TFieldShape> {
+  (): TFieldNamePrefix;
+  <TFieldName extends KeyOfFieldShape<TFieldShape> & (string | number)>(
+    fieldName?: TFieldName,
+  ): [TFieldName] extends [never]
+    ? TFieldNamePrefix
+    : TFieldNamePrefix extends ''
+      ? TFieldName
+      : `${TFieldNamePrefix}.${TFieldName}`;
 }
 
-export interface FieldRenderCtx<
+export interface DefineFieldRenderContext<
   TSchema extends StandardSchemaV1,
-  TName extends string,
+  TFieldName extends string,
 > {
-  name: TName;
+  name: TFieldName;
   schema: TSchema;
-  getFieldName: FieldNameHelper<TName, StandardSchemaV1.InferOutput<TSchema>>;
+  getFieldName: FieldNameHelper<
+    TFieldName,
+    StandardSchemaV1.InferOutput<TSchema>
+  >;
 }
 
-export interface FieldOptions<
+export interface DefineFieldOptions<
   TSchema extends StandardSchemaV1,
-  TName extends string,
-  Args extends unknown[],
-  TResult extends React.ReactNode,
+  TFieldName extends string,
+  TGetDefaultValuesArgs extends unknown[],
+  TRenderResult,
   TProps,
 > {
-  name: TName;
+  name: TFieldName;
   schema: TSchema;
-  getDefaultValues?: (...args: Args) => StandardSchemaV1.InferOutput<TSchema>;
-  render: (ctx: FieldRenderCtx<TSchema, TName>, props: TProps) => TResult;
-  fallback?: TResult;
+  getDefaultValues?: (
+    ...args: TGetDefaultValuesArgs
+  ) => StandardSchemaV1.InferOutput<TSchema>;
+  render: (
+    context: DefineFieldRenderContext<TSchema, TFieldName>,
+    props: TProps,
+  ) => TRenderResult;
+  fallback?: TRenderResult;
 }
 
-export interface FieldResult<
+export interface DefineFieldResult<
   TSchema extends StandardSchemaV1,
-  TName extends string,
-  Args extends unknown[],
-  TResult extends React.ReactNode,
+  TFieldName extends string,
+  TGetDefaultValuesArgs extends unknown[],
+  TRenderResult,
   TProps,
 > {
-  (props: TProps): TResult;
-  fieldShape: { [K in TName]: TSchema };
-  getDefaultValues: (...args: Args) => {
-    [K in TName]: StandardSchemaV1.InferOutput<TSchema>;
+  (props: TProps): TRenderResult;
+  fieldShape: { [Key in TFieldName]: TSchema };
+  getDefaultValues: (...args: TGetDefaultValuesArgs) => {
+    [Key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
   };
-  extends: (
-    opt: Partial<FieldOptions<TSchema, TName, Args, TResult, TProps>>,
-  ) => FieldResult<TSchema, TName, Args, TResult, TProps>;
+  extends: <
+    TExtendSchema extends StandardSchemaV1 = TSchema,
+    TExtendFieldName extends string = TFieldName,
+    TExtendGetDefaultValuesArgs extends unknown[] = TGetDefaultValuesArgs,
+  >(
+    options: Partial<
+      DefineFieldOptions<
+        TExtendSchema,
+        TExtendFieldName,
+        TExtendGetDefaultValuesArgs,
+        TRenderResult,
+        TProps
+      >
+    >,
+  ) => DefineFieldResult<
+    TExtendSchema,
+    TExtendFieldName,
+    TExtendGetDefaultValuesArgs,
+    TRenderResult,
+    TProps
+  >;
 }
 
-export type InferFieldSchema<T> = T extends FieldResult<
-  infer TSchema extends StandardSchemaV1,
+type InferFieldSchemaFromDefineFieldResult<T> = T extends DefineFieldResult<
+  infer Schema,
   any,
   any,
   any,
   any
 >
-  ? NonNullable<StandardSchemaV1.InferOutput<TSchema>>
-  : T extends FieldRenderCtx<infer TSchema extends StandardSchemaV1, any>
-    ? NonNullable<StandardSchemaV1.InferOutput<TSchema>>
+  ? NonNullable<StandardSchemaV1.InferOutput<Schema>>
+  : never;
+
+type InferFieldSchemaFromDefineFieldRenderContext<T> =
+  T extends DefineFieldRenderContext<infer Schema, any>
+    ? NonNullable<StandardSchemaV1.InferOutput<Schema>>
     : never;
 
-export type InferFieldShape<T> = T extends FieldResult<
-  infer TSchema extends StandardSchemaV1,
-  infer TName,
+export type InferFieldSchema<T> =
+  | InferFieldSchemaFromDefineFieldResult<T>
+  | InferFieldSchemaFromDefineFieldRenderContext<T>;
+
+type InferFieldShapeFromDefineFieldResult<T> = T extends DefineFieldResult<
+  infer Schema,
+  infer FieldName,
   any,
   any,
   any
 >
-  ? { [K in TName]: NonNullable<StandardSchemaV1.InferOutput<TSchema>> }
-  : T extends FieldRenderCtx<
-        infer TSchema extends StandardSchemaV1,
-        infer TName
-      >
-    ? { [K in TName]: NonNullable<StandardSchemaV1.InferOutput<TSchema>> }
+  ? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
+  : never;
+
+type InferFieldShapeFromDefineFieldRenderContext<T> =
+  T extends DefineFieldRenderContext<infer Schema, infer FieldName>
+    ? { [key in FieldName]: NonNullable<StandardSchemaV1.InferOutput<Schema>> }
     : never;
 
-export type FieldNameProviderProps = {
+export type InferFieldShape<T> =
+  | InferFieldShapeFromDefineFieldResult<T>
+  | InferFieldShapeFromDefineFieldRenderContext<T>;
+
+export interface FieldNameProviderProps {
   name: string;
   children: React.ReactNode;
-};
+}

@@ -3,10 +3,10 @@ import type React from 'react';
 import { Suspense, useMemo } from 'react';
 import { FieldNameProvider, useFieldName } from './fieldName';
 import type {
+  DefineFieldOptions,
+  DefineFieldRenderContext,
+  DefineFieldResult,
   FieldNameHelper,
-  FieldOptions,
-  FieldRenderCtx,
-  FieldResult,
 } from './types';
 
 export function defineField<
@@ -16,15 +16,15 @@ export function defineField<
   TResult extends React.ReactNode = React.ReactNode,
   TProps extends object = {},
 >(
-  options: FieldOptions<TSchema, TName, TArgs, TResult, TProps>,
-): FieldResult<TSchema, TName, TArgs, TResult, TProps> {
+  options: DefineFieldOptions<TSchema, TName, TArgs, TResult, TProps>,
+): DefineFieldResult<TSchema, TName, TArgs, TResult, TProps> {
   const { name, schema, render, getDefaultValues, fallback } = options;
 
   const FieldContent = (props: TProps): React.ReactNode => {
     const parent = useFieldName();
     const base = parent || name;
 
-    const context = useMemo<FieldRenderCtx<TSchema, TName>>(() => {
+    const context = useMemo<DefineFieldRenderContext<TSchema, TName>>(() => {
       const getFieldName = ((path?: string) =>
         [base, path].filter(Boolean).join('.')) as FieldNameHelper<
         TName,
@@ -53,5 +53,5 @@ export function defineField<
       getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
     extends: (extra: Partial<typeof options>) =>
       defineField({ ...options, ...extra }),
-  }) as FieldResult<TSchema, TName, TArgs, TResult, TProps>;
+  }) as DefineFieldResult<TSchema, TName, TArgs, TResult, TProps>;
 }
