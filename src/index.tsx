@@ -1,13 +1,38 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type React from 'react';
-import { Suspense, useMemo } from 'react';
-import { FieldNameProvider, useFieldName } from './fieldName';
+import { Suspense, createContext, useContext, useMemo } from 'react';
 import type {
   DefineFieldOptions,
   DefineFieldRenderContext,
   DefineFieldResult,
   FieldNameHelper,
+  FieldNameProviderProps,
 } from './types';
+
+export const FieldNameContext: React.Context<{ name?: string }> = createContext(
+  {},
+);
+
+export const useFieldName = (): string =>
+  useContext(FieldNameContext).name ?? '';
+
+export const FieldNameProvider = ({
+  name,
+  children,
+}: FieldNameProviderProps): React.ReactNode => {
+  const parent = useFieldName();
+
+  const value = useMemo(
+    () => ({ name: [parent, name].filter(Boolean).join('.') }),
+    [parent, name],
+  );
+
+  return (
+    <FieldNameContext.Provider value={value}>
+      {children}
+    </FieldNameContext.Provider>
+  );
+};
 
 export function defineField<
   TName extends string,
@@ -55,3 +80,5 @@ export function defineField<
       defineField({ ...options, ...extra }),
   }) as DefineFieldResult<TSchema, TName, TArgs, TResult, TProps>;
 }
+
+export type { InferFieldShape, InferFieldSchema } from './types';
