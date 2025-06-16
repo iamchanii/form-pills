@@ -32,34 +32,33 @@ export function defineField<
   TFieldName extends string,
   TSchema extends StandardSchemaV1,
   TGetDefaultValuesArgs extends unknown[] = [],
-  TResult extends React.ReactNode = React.ReactNode,
   TProps extends object = {},
 >(
   options: DefineFieldOptions<
     TSchema,
     TFieldName,
     TGetDefaultValuesArgs,
-    TResult,
+    React.ReactNode,
     TProps
   >,
 ): DefineFieldResult<
   TSchema,
   TFieldName,
   TGetDefaultValuesArgs,
-  TResult,
+  React.ReactNode,
   TProps
 > {
   const { name, schema, render, getDefaultValues, fallback } = options;
 
   const FieldContent = (props: TProps): React.ReactNode => {
     const { name: parentFieldName } = useContext(FieldNameContext);
-    const base = parentFieldName ?? name;
+    const baseName = parentFieldName ?? name;
 
     const context = useMemo<
       DefineFieldRenderContext<TSchema, TFieldName>
     >(() => {
       const getFieldName = ((path?: string) =>
-        [base, path].filter(Boolean).join('.')) as FieldNameHelper<
+        [baseName, path].filter(Boolean).join('.')) as FieldNameHelper<
         TFieldName,
         StandardSchemaV1.InferOutput<TSchema>
       >;
@@ -68,7 +67,7 @@ export function defineField<
         TSchema,
         TFieldName
       >;
-    }, [base]);
+    }, [baseName]);
 
     return <>{render(context, props)}</>;
   };
@@ -88,18 +87,18 @@ export function defineField<
   };
 
   const FieldResult = Object.assign(Field, {
-    fieldShape: { [name]: schema } as const,
     getDefaultValues: (...args: TGetDefaultValuesArgs) =>
       getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
-    extends: (extra: Partial<typeof options>) =>
-      defineField({ ...options, ...extra }),
+    fieldShape: { [name]: schema },
+    extends: (extendsOptions: Partial<typeof options>) =>
+      defineField({ ...options, ...extendsOptions }),
   });
 
   return FieldResult as DefineFieldResult<
     TSchema,
     TFieldName,
     TGetDefaultValuesArgs,
-    TResult,
+    React.ReactNode,
     TProps
   >;
 }
