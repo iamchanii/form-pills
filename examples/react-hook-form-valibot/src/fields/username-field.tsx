@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import * as v from 'valibot';
 
-export const UsernameField = defineField<{ label: string }>()({
+export const UsernameField = defineField({
   name: 'username',
   schema: v.pipe(v.string(), v.minLength(1, 'Username is required')),
   getDefaultValues: () => 'John',
-  render: (context, props) => {
+  render: (context, props: { label: string }) => {
     type FieldShape = InferFieldShape<typeof context>;
 
     return (

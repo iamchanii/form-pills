@@ -15,7 +15,7 @@ import {
 import { type InferFieldShape, defineField } from 'form-pills';
 import * as v from 'valibot';
 
-export const CityField = defineField()({
+export const CityField = defineField({
   name: 'city',
   schema: v.pipe(v.string(), v.minLength(1, 'City is required')),
   getDefaultValues: () => 'New York',

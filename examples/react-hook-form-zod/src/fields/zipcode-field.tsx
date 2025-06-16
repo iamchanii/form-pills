@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
-export const ZipcodeField = defineField()({
+export const ZipcodeField = defineField({
   name: 'zipcode',
   schema: z.string().min(5, 'Zip code must be at least 5 characters'),
   getDefaultValues: () => '10001',

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import * as v from 'valibot';
 
-export const EmailField = defineField()({
+export const EmailField = defineField({
   name: 'email',
   schema: v.pipe(v.string(), v.email('Invalid email address')),
   getDefaultValues: () => 'john@example.com',

@@ -1,4 +1,5 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec';
+import type React from 'react';
 
 type Primitive =
   | string
@@ -66,9 +67,9 @@ export interface DefineFieldResult<
   TProps,
 > {
   (props: TProps): TRenderResult;
-  fieldShape: { [key in TFieldName]: TSchema };
+  fieldShape: { [Key in TFieldName]: TSchema };
   getDefaultValues: (...args: TGetDefaultValuesArgs) => {
-    [key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
+    [Key in TFieldName]: StandardSchemaV1.InferOutput<TSchema>;
   };
   extends: <
     TExtendSchema extends StandardSchemaV1 = TSchema,
@@ -133,5 +134,5 @@ export type InferFieldShape<T> =
 
 export interface FieldNameProviderProps {
   name: string;
-  children: any;
+  children: React.ReactNode;
 }
