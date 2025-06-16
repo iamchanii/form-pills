@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { CityField } from './city-field';
 import { ZipcodeField } from './zipcode-field';
 
-export const AddressField = defineField()({
+export const AddressField = defineField({
   name: 'address',
   schema: z.object({
     ...CityField.fieldShape,

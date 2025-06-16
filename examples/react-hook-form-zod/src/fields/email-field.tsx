@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
-export const EmailField = defineField()({
+export const EmailField = defineField({
   name: 'email',
   schema: z.string().email('Invalid email address'),
   getDefaultValues: () => 'john@example.com',

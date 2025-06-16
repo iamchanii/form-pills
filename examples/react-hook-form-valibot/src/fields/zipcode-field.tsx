@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import * as v from 'valibot';
 
-export const ZipcodeField = defineField()({
+export const ZipcodeField = defineField({
   name: 'zipcode',
   schema: v.pipe(
     v.string(),

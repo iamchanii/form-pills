@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
-export const UsernameField = defineField<{ label: string }>()({
+export const UsernameField = defineField({
   name: 'username',
   schema: z.string().min(1, 'Username is required'),
   getDefaultValues: () => 'John',
-  render: (context, props) => {
+  render: (context, props: { label: string }) => {
     type FieldShape = InferFieldShape<typeof context>;
 
     return (

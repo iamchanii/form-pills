@@ -15,7 +15,7 @@ import {
 import { type InferFieldShape, defineField } from 'form-pills';
 import { z } from 'zod';
 
-export const CityField = defineField()({
+export const CityField = defineField({
   name: 'city',
   schema: z.string().min(1, 'City is required'),
   getDefaultValues: () => 'New York',

@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown/config';
 
 export default defineConfig({
-  entry: ['./src/index.tsx'],
+  entry: ['./src/index.ts'],
   format: 'esm',
   target: 'node16',
   clean: true,
