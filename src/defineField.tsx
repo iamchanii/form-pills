@@ -10,31 +10,32 @@ import type {
 } from './core/types';
 
 export function defineField<
-  N extends string,
-  S extends StandardSchemaV1,
-  Args extends unknown[] = [],
-  Res = React.ReactNode,
-  Props extends object = {},
+  TName extends string,
+  TSchema extends StandardSchemaV1,
+  TArgs extends unknown[] = [],
+  TResult = React.ReactNode,
+  TProps extends object = {},
 >(
-  options: FieldOptions<S, N, Args, Res, Props>,
-): FieldResult<S, N, Args, Res, Props> {
+  options: FieldOptions<TSchema, TName, TArgs, TResult, TProps>,
+): FieldResult<TSchema, TName, TArgs, TResult, TProps> {
   const { name, schema, render, getDefaultValues, fallback } = options;
 
-  const FieldContent: React.FC<Props> = (props) => {
+  const FieldContent: React.FC<TProps> = (props) => {
     const parent = useFieldName();
     const base = parent || name;
 
-    const ctx: FieldRenderCtx<S, N> = useMemo(() => {
-      const helper: FieldNameHelper<N, StandardSchemaV1.InferOutput<S>> = ((
-        p?: string,
-      ) => [base, p].filter(Boolean).join('.')) as any;
+    const ctx: FieldRenderCtx<TSchema, TName> = useMemo(() => {
+      const helper: FieldNameHelper<
+        TName,
+        StandardSchemaV1.InferOutput<TSchema>
+      > = ((p?: string) => [base, p].filter(Boolean).join('.')) as any;
       return { name, schema, getFieldName: helper };
     }, [base]);
 
     return <>{render(ctx, props) as React.ReactNode}</>;
   };
 
-  const Field: React.FC<Props> = (props) => {
+  const Field: React.FC<TProps> = (props) => {
     const body = (
       <FieldNameProvider name={name}>
         <FieldContent {...props} />
@@ -49,9 +50,9 @@ export function defineField<
 
   return Object.assign(Field, {
     fieldShape: { [name]: schema } as const,
-    getDefaultValues: (...a: Args) =>
+    getDefaultValues: (...a: TArgs) =>
       getDefaultValues ? { [name]: getDefaultValues(...a) } : undefined,
     extends: (extra: Partial<typeof options>) =>
       defineField({ ...options, ...extra }),
-  }) as unknown as FieldResult<S, N, Args, Res, Props>;
+  }) as unknown as FieldResult<TSchema, TName, TArgs, TResult, TProps>;
 }

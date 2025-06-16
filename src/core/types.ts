@@ -12,11 +12,10 @@ type Primitive =
 
 type Keys<T> = T extends T ? keyof T : never;
 
-type Join<K extends string | number, P extends string | number> = P extends
-  | ''
-  | never
-  ? `${K}`
-  : `${K}.${P}`;
+type Join<
+  Key extends string | number,
+  Path extends string | number,
+> = Path extends '' | never ? `${Key}` : `${Key}.${Path}`;
 
 export type Paths<
   T,
@@ -38,65 +37,71 @@ export interface FieldNameHelper<Prefix extends string, Shape> {
 }
 
 // Public APIs
-export interface FieldRenderCtx<S extends StandardSchemaV1, N extends string> {
-  name: N;
-  schema: S;
-  getFieldName: FieldNameHelper<N, StandardSchemaV1.InferOutput<S>>;
+export interface FieldRenderCtx<
+  TSchema extends StandardSchemaV1,
+  TName extends string,
+> {
+  name: TName;
+  schema: TSchema;
+  getFieldName: FieldNameHelper<TName, StandardSchemaV1.InferOutput<TSchema>>;
 }
 
 export interface FieldOptions<
-  S extends StandardSchemaV1,
-  N extends string,
+  TSchema extends StandardSchemaV1,
+  TName extends string,
   Args extends unknown[],
-  Result,
-  Props,
+  TResult,
+  TProps,
 > {
-  name: N;
-  schema: S;
-  getDefaultValues?: (...args: Args) => StandardSchemaV1.InferOutput<S>;
-  render: (ctx: FieldRenderCtx<S, N>, props: Props) => Result;
-  fallback?: Result;
+  name: TName;
+  schema: TSchema;
+  getDefaultValues?: (...args: Args) => StandardSchemaV1.InferOutput<TSchema>;
+  render: (ctx: FieldRenderCtx<TSchema, TName>, props: TProps) => TResult;
+  fallback?: TResult;
 }
 
 export interface FieldResult<
-  S extends StandardSchemaV1,
-  N extends string,
+  TSchema extends StandardSchemaV1,
+  TName extends string,
   Args extends unknown[],
-  Result,
-  Props,
+  TResult,
+  TProps,
 > {
-  (props: Props): Result;
-  fieldShape: { [K in N]: S };
+  (props: TProps): TResult;
+  fieldShape: { [K in TName]: TSchema };
   getDefaultValues: (...args: Args) => {
-    [K in N]: StandardSchemaV1.InferOutput<S>;
+    [K in TName]: StandardSchemaV1.InferOutput<TSchema>;
   };
   extends: (
-    opt: Partial<FieldOptions<S, N, Args, Result, Props>>,
-  ) => FieldResult<S, N, Args, Result, Props>;
+    opt: Partial<FieldOptions<TSchema, TName, Args, TResult, TProps>>,
+  ) => FieldResult<TSchema, TName, Args, TResult, TProps>;
 }
 
 export type InferFieldSchema<T> = T extends FieldResult<
-  infer S extends StandardSchemaV1,
+  infer TSchema extends StandardSchemaV1,
   any,
   any,
   any,
   any
 >
-  ? NonNullable<StandardSchemaV1.InferOutput<S>>
-  : T extends FieldRenderCtx<infer S extends StandardSchemaV1, any>
-    ? NonNullable<StandardSchemaV1.InferOutput<S>>
+  ? NonNullable<StandardSchemaV1.InferOutput<TSchema>>
+  : T extends FieldRenderCtx<infer TSchema extends StandardSchemaV1, any>
+    ? NonNullable<StandardSchemaV1.InferOutput<TSchema>>
     : never;
 
 export type InferFieldShape<T> = T extends FieldResult<
-  infer S extends StandardSchemaV1,
-  infer N,
+  infer TSchema extends StandardSchemaV1,
+  infer TName,
   any,
   any,
   any
 >
-  ? { [K in N]: NonNullable<StandardSchemaV1.InferOutput<S>> }
-  : T extends FieldRenderCtx<infer S extends StandardSchemaV1, infer N>
-    ? { [K in N]: NonNullable<StandardSchemaV1.InferOutput<S>> }
+  ? { [K in TName]: NonNullable<StandardSchemaV1.InferOutput<TSchema>> }
+  : T extends FieldRenderCtx<
+        infer TSchema extends StandardSchemaV1,
+        infer TName
+      >
+    ? { [K in TName]: NonNullable<StandardSchemaV1.InferOutput<TSchema>> }
     : never;
 
 export type FieldNameProviderProps = {
