@@ -20,27 +20,30 @@ export function defineField<
 ): FieldResult<TSchema, TName, TArgs, TResult, TProps> {
   const { name, schema, render, getDefaultValues, fallback } = options;
 
-  const FieldContent: React.FC<TProps> = (props) => {
+  const FieldContent = (props: TProps): React.ReactNode => {
     const parent = useFieldName();
     const base = parent || name;
 
-    const ctx: FieldRenderCtx<TSchema, TName> = useMemo(() => {
-      const helper: FieldNameHelper<
+    const context = useMemo<FieldRenderCtx<TSchema, TName>>(() => {
+      const getFieldName = ((path?: string) =>
+        [base, path].filter(Boolean).join('.')) as FieldNameHelper<
         TName,
         StandardSchemaV1.InferOutput<TSchema>
-      > = ((p?: string) => [base, p].filter(Boolean).join('.')) as any;
-      return { name, schema, getFieldName: helper };
+      >;
+
+      return { name, schema, getFieldName };
     }, [base]);
 
-    return <>{render(ctx, props)}</>;
+    return <>{render(context, props)}</>;
   };
 
-  const Field: React.FC<TProps> = (props) => {
+  const Field = (props: TProps): React.ReactNode => {
     const body = (
       <FieldNameProvider name={name}>
         <FieldContent {...props} />
       </FieldNameProvider>
     );
+
     return fallback ? <Suspense fallback={fallback}>{body}</Suspense> : body;
   };
 
@@ -50,5 +53,5 @@ export function defineField<
       getDefaultValues ? { [name]: getDefaultValues(...args) } : undefined,
     extends: (extra: Partial<typeof options>) =>
       defineField({ ...options, ...extra }),
-  }) as unknown as FieldResult<TSchema, TName, TArgs, TResult, TProps>;
+  }) as FieldResult<TSchema, TName, TArgs, TResult, TProps>;
 }
